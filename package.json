@@ -3,7 +3,7 @@
     "displayName": "Gerrit View",
     "description": "Show the gerrit dashboard in a tree view",
     "keywords": [],
-    "version": "0.0.1",
+    "version": "0.0.2",
     "icon": "resources/gerrit-view.png",
     "publisher": "Gruntfuggly",
     "engines": {
