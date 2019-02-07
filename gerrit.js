@@ -59,10 +59,12 @@ module.exports.run = function run( query, options )
             ssh.execCommand( [ query.command, query.query, query.options, "--format JSON" ].join( " " ) ).then( function( result )
             {
                 resolve( formatResults( result.stdout, debug ) );
+                ssh.dispose();
             } )
         }, function( error )
             {
                 reject( new GerritError( error, "" ) );
+                ssh.dispose();
             }
         );
     } );

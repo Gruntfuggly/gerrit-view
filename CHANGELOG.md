@@ -1,3 +1,6 @@
+# v0.0.3 - 2019-02-07
+- Allow user to enter server name if undefined
+
 # v0.0.2 - 2019-02-06
 - Fix open in browser
 

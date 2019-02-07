@@ -2,8 +2,7 @@
     "name": "gerrit-view",
     "displayName": "Gerrit View",
     "description": "Show the gerrit dashboard in a tree view",
-    "keywords": [],
-    "version": "0.0.2",
+    "version": "0.0.3",
     "icon": "resources/gerrit-view.png",
     "publisher": "Gruntfuggly",
     "engines": {
@@ -31,14 +30,14 @@
                 {
                     "id": "gerrit-view",
                     "name": "Gerrit",
-                    "when": "gerrit-view-tree-built == true && gerrit-view-in-explorer == true"
+                    "when": "gerrit-view-show-tree == true && gerrit-view-in-explorer == true"
                 }
             ],
             "scm": [
                 {
                     "id": "gerrit-view",
                     "name": "Gerrit",
-                    "when": "gerrit-view-tree-built == true"
+                    "when": "gerrit-view-show-tree == true"
                 }
             ]
         },
