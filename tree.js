@@ -78,14 +78,17 @@ function forEachNode( callback, children )
     {
         children = nodes;
     }
-    children.forEach( child =>
+    if( children !== undefined )
     {
-        if( child.nodes !== undefined )
+        children.forEach( child =>
         {
-            forEachNode( callback, child.nodes );
-        }
-        callback( child );
-    } );
+            if( child.nodes !== undefined )
+            {
+                forEachNode( callback, child.nodes );
+            }
+            callback( child );
+        } );
+    }
 }
 
 function sortNodes( a, b )
@@ -110,8 +113,9 @@ class TreeNodeProvider
 
         showChangedOnly = _context.workspaceState.get( 'showChangedOnly', false );
         expandedNodes = _context.workspaceState.get( 'expandedNodes', {} );
-        changedNodes = _context.workspaceState.get( 'changedNodes', {} );
-        hashes = _context.workspaceState.get( 'hashes', {} );
+
+        changedNodes = _context.globalState.get( 'changedNodes', {} );
+        hashes = _context.globalState.get( 'hashes', {} );
 
         if( _context.storagePath && !fs.existsSync( _context.storagePath ) )
         {
@@ -366,10 +370,7 @@ class TreeNodeProvider
                         }
                         else
                         {
-                            if( hasChanged && node.showChanged )
-                            {
-                                node.changed = true;
-                            }
+                            node.changed = changedNodes[ node.id ] || hasChanged;
                             node.delete = false;
                         }
 
@@ -430,7 +431,7 @@ class TreeNodeProvider
                         if( hasChanged )
                         {
                             changedNodes[ node.id ] = true;
-                            this._context.workspaceState.update( 'changedNodes', changedNodes );
+                            this._context.globalState.update( 'changedNodes', changedNodes );
                         }
 
                     }, this );
@@ -444,7 +445,7 @@ class TreeNodeProvider
 
         this.prune();
 
-        this._context.workspaceState.update( 'hashes', hashes );
+        this._context.globalState.update( 'hashes', hashes );
 
         return updatedEntries;
     }
@@ -535,8 +536,8 @@ class TreeNodeProvider
         {
             delete changedNodes[ node.id ];
         }
-        this._context.workspaceState.update( 'changedNodes', changedNodes );
-        this._context.workspaceState.update( 'hashes', hashes );
+        this._context.globalState.update( 'changedNodes', changedNodes );
+        this._context.globalState.update( 'hashes', hashes );
         this.refresh();
     }
 
@@ -544,7 +545,7 @@ class TreeNodeProvider
     {
         forEachNode( function( node ) { node.changed = false; }, nodes );
         changedNodes = {};
-        this._context.workspaceState.update( 'changedNodes', changedNodes );
+        this._context.globalState.update( 'changedNodes', changedNodes );
         this.refresh();
     }
 
@@ -569,6 +570,12 @@ class TreeNodeProvider
     setSelected( node )
     {
         selectedNode = node.id;
+    }
+
+    sync()
+    {
+        changedNodes = this._context.globalState.get( 'changedNodes', {} );
+        hashes = this._context.globalState.get( 'hashes', {} );
     }
 }
 

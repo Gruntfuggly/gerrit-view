@@ -8,7 +8,10 @@ var tree = require( "./tree.js" );
 var objectUtils = require( "./objectUtils.js" );
 
 var autoRefresh;
+var lastResults;
 var showTree = false;
+var icons = {};
+var formatters = {};
 
 function toString( date )
 {
@@ -123,7 +126,121 @@ function activate( context )
 
     function getGerritData( refreshRequired )
     {
-        var icons = {};
+        if( vscode.window.state.focused !== true )
+        {
+            return;
+        }
+
+        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+
+        if( config.get( 'server' ).trim().length === 0 )
+        {
+            showTree = true;
+            setContext();
+            vscode.window.showInputBox( { prompt: "Please enter your gerrit server name:" } ).then(
+                function( name )
+                {
+                    if( name && name.trim().length > 0 )
+                    {
+                        config.update( 'server', name, true );
+                    }
+                } );
+        }
+        else
+        {
+            var query = {
+                port: config.get( "port" ),
+                server: config.get( "server" ),
+                command: "gerrit query",
+                query: config.get( "query" ),
+                options: config.get( "options" ),
+                keyFile: path.join( os.homedir(), config.get( "pathToSshKey" ) )
+            };
+
+            gerrit.run( query, { outputChannel: outputChannel, maxBuffer: config.get( "queryBufferSize" ) } ).then( function( results )
+            {
+                if( results.length > 0 )
+                {
+                    buildTree( results );
+                }
+                else
+                {
+                    vscode.window.showInformationMessage( "gerrit-view: No results found" );
+                }
+
+                scheduleRefresh();
+
+            } ).catch( function( e )
+            {
+                var message = e.message;
+                if( e.stderr )
+                {
+                    message += " (" + e.stderr + ")";
+                }
+                vscode.window.showErrorMessage( "gerrit-view: " + message );
+            } );
+
+            debug( "Last update: " + new Date().toISOString() );
+        }
+    }
+
+    function buildTree( results )
+    {
+        if( results !== undefined )
+        {
+            var changed = provider.populate( results, icons, formatters, "number" );
+
+            debug( results.length + " entries, " + changed.length + " changed " + ( changed.length > 0 ? ( "(" + changed.join( "," ) + ")" ) : "" ) );
+
+            provider.filter( context.workspaceState.get( 'filter', {} ) );
+
+            if( changed.length > 0 )
+            {
+                vscode.window.showInformationMessage( "gerrit-view: Updated change sets: " + changed.join( "," ) );
+            }
+
+            showTree = true;
+
+            refresh();
+
+            lastResults = results;
+        }
+    }
+
+    function scheduleRefresh()
+    {
+        var interval = parseInt( vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'autoRefresh' ) );
+
+        clearInterval( autoRefresh );
+
+        if( !isNaN( interval ) && interval > 0 )
+        {
+            autoRefresh = setTimeout( getGerritData, interval * 1000 );
+        }
+    }
+
+    function showChangedOnly()
+    {
+        context.workspaceState.update( 'showChangedOnly', true );
+        provider.showChangedOnly();
+        setContext();
+    }
+
+    function showAll()
+    {
+        context.workspaceState.update( 'showChangedOnly', false );
+        provider.showAll();
+        setContext();
+    }
+
+    function clearAll()
+    {
+        provider.clearAll();
+        setContext();
+    }
+
+    function register()
+    {
         icons.overallScore = function( entry )
         {
             var name;
@@ -209,7 +326,6 @@ function activate( context )
             return name;
         };
 
-        formatters = {};
         formatters.created = function( entry )
         {
             var date = new Date( 0 );
@@ -223,110 +339,6 @@ function activate( context )
             return "Updated: " + toString( date );
         };
 
-        if( vscode.window.state.focused !== true )
-        {
-            return;
-        }
-
-        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
-
-        if( config.get( 'server' ).trim().length === 0 )
-        {
-            showTree = true;
-            setContext();
-            vscode.window.showInputBox( { prompt: "Please enter your gerrit server name:" } ).then(
-                function( name )
-                {
-                    if( name && name.trim().length > 0 )
-                    {
-                        config.update( 'server', name, true );
-                    }
-                } );
-        }
-        else
-        {
-            var query = {
-                port: config.get( "port" ),
-                server: config.get( "server" ),
-                command: "gerrit query",
-                query: config.get( "query" ),
-                options: config.get( "options" ),
-                keyFile: path.join( os.homedir(), config.get( "pathToSshKey" ) )
-            };
-            gerrit.run( query, { outputChannel: outputChannel, maxBuffer: config.get( "queryBufferSize" ) } ).then( function( results )
-            {
-                if( results.length > 0 )
-                {
-                    var changed = provider.populate( results, icons, formatters, "number" );
-
-                    debug( results.length + " entries found, " + changed.length + " changed (" + changed.join( "," ) + ")" );
-
-                    provider.filter( context.workspaceState.get( 'filter', {} ) );
-
-                    if( changed.length > 0 )
-                    {
-                        vscode.window.showInformationMessage( "gerrit-view: Updated change sets: " + changed.join( "," ) );
-                    }
-
-                    showTree = true;
-
-                    refresh();
-                }
-                else
-                {
-                    vscode.window.showInformationMessage( "gerrit-view: No results found" );
-                }
-
-                scheduleRefresh();
-
-            } ).catch( function( e )
-            {
-                var message = e.message;
-                if( e.stderr )
-                {
-                    message += " (" + e.stderr + ")";
-                }
-                vscode.window.showErrorMessage( "gerrit-view: " + message );
-            } );
-
-            debug( "Last update: " + new Date().toISOString() );
-        }
-    }
-
-    function scheduleRefresh()
-    {
-        var interval = parseInt( vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'autoRefresh' ) );
-
-        clearInterval( autoRefresh );
-
-        if( !isNaN( interval ) && interval > 0 )
-        {
-            autoRefresh = setTimeout( getGerritData, interval * 1000 );
-        }
-    }
-
-    function showChangedOnly()
-    {
-        context.workspaceState.update( 'showChangedOnly', true );
-        provider.showChangedOnly();
-        setContext();
-    }
-
-    function showAll()
-    {
-        context.workspaceState.update( 'showChangedOnly', false );
-        provider.showAll();
-        setContext();
-    }
-
-    function clearAll()
-    {
-        provider.clearAll();
-        setContext();
-    }
-
-    function register()
-    {
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.filter', function()
         {
             var keys = Array.from( provider.getKeys() );
@@ -368,6 +380,23 @@ function activate( context )
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.filterClear', clearFilter ) );
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.refresh', getGerritData ) );
+
+        context.subscriptions.push( vscode.window.onDidChangeWindowState( function( e )
+        {
+            if( e.focused )
+            {
+                provider.sync();
+                if( lastResults === undefined )
+                {
+                    getGerritData();
+                }
+                else
+                {
+                    debug( "Refreshing tree..." );
+                    buildTree( lastResults );
+                }
+            }
+        } ) );
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.openInBrowser', function( item )
         {
