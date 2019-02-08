@@ -1,3 +1,9 @@
+# v0.0.5 - 2019-02-08
+- Add patch number to tree
+- Refresh on window activation
+- Improve changed node functionality
+- Fix disappearing views
+
 # v0.0.4 - 2019-02-07
 - Use global storage for query results and sync when changing windows
 

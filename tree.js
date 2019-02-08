@@ -370,6 +370,7 @@ class TreeNodeProvider
                         }
                         else
                         {
+                            // TODO Only flag nodes which have actually changed
                             node.changed = changedNodes[ node.id ] || hasChanged;
                             node.delete = false;
                         }
@@ -428,7 +429,7 @@ class TreeNodeProvider
                             node.tooltip = tooltip;
                         }
 
-                        if( hasChanged )
+                        if( node.showChanged && hasChanged )
                         {
                             changedNodes[ node.id ] = true;
                             this._context.globalState.update( 'changedNodes', changedNodes );

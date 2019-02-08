@@ -2,7 +2,7 @@
     "name": "gerrit-view",
     "displayName": "Gerrit View",
     "description": "Show the gerrit dashboard in a tree view",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "icon": "resources/gerrit-view.png",
     "publisher": "Gruntfuggly",
     "engines": {
@@ -28,14 +28,14 @@
         "views": {
             "explorer": [
                 {
-                    "id": "gerrit-view",
+                    "id": "gerrit-view-explorer",
                     "name": "Gerrit",
                     "when": "gerrit-view-show-tree == true && gerrit-view-in-explorer == true"
                 }
             ],
             "scm": [
                 {
-                    "id": "gerrit-view",
+                    "id": "gerrit-view-scm",
                     "name": "Gerrit",
                     "when": "gerrit-view-show-tree == true"
                 }
@@ -230,5 +230,10 @@
         "micromatch": "^3.1.10",
         "node-ssh": "^5.1.2",
         "octicons": "^7.4.0"
+    },
+    "__metadata": {
+        "id": "1813bf30-217f-4394-bb0f-f834ba299fc2",
+        "publisherDisplayName": "Gruntfuggly",
+        "publisherId": "d4906d2e-f2ee-492d-9c7c-02b6160599ec"
     }
 }

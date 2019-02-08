@@ -57,6 +57,7 @@ function activate( context )
         {
             parent: "subject",
             children: [
+                { property: "currentPatchSet.number", format: "Patch set: ${currentPatchSet.number}", showChanged: true },
                 { property: "currentPatchSet.approvals.by.name", icon: "score", tooltip: "${currentPatchSet.approvals.by.email}", showChanged: true },
                 { property: "id", format: "ID: ${id}" },
                 { property: "createdOn", formatter: "created" },
@@ -74,12 +75,14 @@ function activate( context )
 
     var provider = new tree.TreeNodeProvider( context, structure );
 
-    var gerritView = vscode.window.createTreeView( "gerrit-view", { treeDataProvider: provider, showCollapseAll: true } );
+    var gerritViewExplorer = vscode.window.createTreeView( "gerrit-view-explorer", { treeDataProvider: provider, showCollapseAll: true } );
+    var gerritViewScm = vscode.window.createTreeView( "gerrit-view-scm", { treeDataProvider: provider, showCollapseAll: true } );
 
     var outputChannel;
 
     context.subscriptions.push( provider );
-    context.subscriptions.push( gerritView );
+    context.subscriptions.push( gerritViewExplorer );
+    context.subscriptions.push( gerritViewScm );
 
     function resetOutputChannel()
     {
@@ -394,6 +397,7 @@ function activate( context )
                 {
                     debug( "Refreshing tree..." );
                     buildTree( lastResults );
+                    scheduleRefresh();
                 }
             }
         } ) );
@@ -420,8 +424,10 @@ function activate( context )
             } );
         } ) );
 
-        context.subscriptions.push( gerritView.onDidExpandElement( function( e ) { provider.setExpanded( e.element.id, true ); } ) );
-        context.subscriptions.push( gerritView.onDidCollapseElement( function( e ) { provider.setExpanded( e.element.id, false ); } ) );
+        context.subscriptions.push( gerritViewExplorer.onDidExpandElement( function( e ) { provider.setExpanded( e.element.id, true ); } ) );
+        context.subscriptions.push( gerritViewExplorer.onDidCollapseElement( function( e ) { provider.setExpanded( e.element.id, false ); } ) );
+        context.subscriptions.push( gerritViewScm.onDidExpandElement( function( e ) { provider.setExpanded( e.element.id, true ); } ) );
+        context.subscriptions.push( gerritViewScm.onDidCollapseElement( function( e ) { provider.setExpanded( e.element.id, false ); } ) );
 
         context.subscriptions.push( vscode.workspace.onDidChangeConfiguration( function( e )
         {
