@@ -536,6 +536,7 @@ class TreeNodeProvider
         else
         {
             delete changedNodes[ node.id ];
+            forEachNode( function( node ) { if( node.showChanged === true ) { node.changed = false; delete changedNodes[ node.id ]; } }, node.nodes );
         }
         this._context.globalState.update( 'changedNodes', changedNodes );
         this._context.globalState.update( 'hashes', hashes );

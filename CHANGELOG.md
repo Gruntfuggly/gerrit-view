@@ -1,3 +1,6 @@
+# v0.0.6 - 2019-02-11
+- Mark children as read when marking nodes read in the tree
+
 # v0.0.5 - 2019-02-08
 - Add patch number to tree
 - Refresh on window activation
