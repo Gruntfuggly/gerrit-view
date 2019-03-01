@@ -303,11 +303,13 @@ class TreeNodeProvider
 
                 if( node === undefined )
                 {
+                    var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
+
                     node = {
                         source: entry,
                         entry: key,
                         value: v.value,
-                        label: v.value,
+                        label: label,
                         type: child.property,
                         id: id,
                         visible: true,

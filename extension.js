@@ -55,6 +55,16 @@ function activate( context )
                                             children: [
                                                 { property: "owner.email" }
                                             ],
+                                        },
+                                        {
+                                            property: "comments",
+                                            format: "Comments",
+                                            children: [
+                                                {
+                                                    property: "comments.message",
+                                                    tooltip: "${comments.message}"
+                                                }
+                                            ]
                                         }
                                     ],
                                 }
