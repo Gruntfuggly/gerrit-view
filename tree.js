@@ -323,7 +323,10 @@ class TreeNodeProvider
                     {
                         node.parent = parent;
                         parent.nodes.push( node );
-                        parent.nodes.sort( sortNodes );
+                        if( child.sort === true )
+                        {
+                            parent.nodes.sort( sortNodes );
+                        }
                     }
                     else
                     {
