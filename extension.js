@@ -25,51 +25,44 @@ function activate( context )
 {
     var structure = [
         {
-            children: [
-                { property: "project", icon: "briefcase" }
-            ]
-        },
-        {
-            parent: "project",
-            children: [
-                { property: "branch", format: "branch: ${branch}", icon: "git-branch" }
-            ]
-        },
-        {
-            parent: "branch",
-            children: [
-                { property: "status" }
-            ]
-        },
-        {
-            parent: "status",
+            property: "project",
+            icon: "briefcase",
             children: [
                 {
-                    property: "subject",
-                    icon: "overallScore",
-                    showChanged: true,
-                    format: "${number} ${subject}",
-                    hasContextMenu: true,
-                    tooltip: "${commitMessage}"
+                    property: "branch",
+                    format: "branch: ${branch}",
+                    icon: "git-branch",
+                    children: [
+                        {
+                            property: "status",
+                            children: [
+                                {
+                                    property: "subject",
+                                    icon: "overallScore",
+                                    showChanged: true,
+                                    format: "${number} ${subject}",
+                                    hasContextMenu: true,
+                                    tooltip: "${commitMessage}",
+                                    children: [
+                                        { property: "currentPatchSet.number", format: "Patch set: ${currentPatchSet.number}", showChanged: true },
+                                        { property: "currentPatchSet.approvals.by.name", icon: "score", tooltip: "${currentPatchSet.approvals.by.email}", showChanged: true },
+                                        { property: "id", format: "ID: ${id}" },
+                                        { property: "createdOn", formatter: "created" },
+                                        { property: "lastUpdated", formatter: "updated", showChanged: true },
+                                        {
+                                            property: "owner.name",
+                                            format: "Owner: ${owner.name} (${owner.username})",
+                                            children: [
+                                                { property: "owner.email" }
+                                            ],
+                                        }
+                                    ],
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
-        },
-        {
-            parent: "subject",
-            children: [
-                { property: "currentPatchSet.number", format: "Patch set: ${currentPatchSet.number}", showChanged: true },
-                { property: "currentPatchSet.approvals.by.name", icon: "score", tooltip: "${currentPatchSet.approvals.by.email}", showChanged: true },
-                { property: "id", format: "ID: ${id}" },
-                { property: "createdOn", formatter: "created" },
-                { property: "lastUpdated", formatter: "updated", showChanged: true },
-                { property: "owner.name", format: "Owner: ${owner.name} (${owner.username})" }
-            ],
-        },
-        {
-            parent: "owner.name",
-            children: [
-                { property: "owner.email" }
-            ],
         }
     ];
 

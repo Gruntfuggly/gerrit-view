@@ -271,13 +271,142 @@ class TreeNodeProvider
         forEachNode( function( e ) { e.visible = true; }, nodes );
     }
 
-    populate( data, icons, formatters, keyField )
+    processChildren( processor, icons, formatters, entry, key, hasChanged, children, parent )
     {
         var locateNode = function( node )
         {
-            return node.type === this.type && node.value === this.value;
+            return node.id === this;
         };
 
+        children.map( function( child )
+        {
+            keys.add( child.property );
+
+            var values = objectUtils.getProperties( entry, child.property );
+
+            values.map( function( v )
+            {
+                var node;
+
+                // var sanitizedPathElement = sanitizePath( v.expandedPath );
+                // var id = parent ? ( parent.id + "." + sanitizedPathElement ) : sanitizedPathElement;
+                var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
+
+                if( parent !== undefined )
+                {
+                    node = parent.nodes.find( locateNode, id );
+                }
+                else
+                {
+                    node = nodes.find( locateNode, id );
+                }
+
+                if( node === undefined )
+                {
+                    node = {
+                        source: entry,
+                        entry: key,
+                        value: v.value,
+                        label: v.value,
+                        type: child.property,
+                        id: id,
+                        visible: true,
+                        showChanged: child.showChanged,
+                        hasContextMenu: child.hasContextMenu,
+                        nodes: [],
+                        changed: ( changedNodes[ id ] === true || hasChanged )
+                    };
+
+                    if( parent )
+                    {
+                        node.parent = parent;
+                        parent.nodes.push( node );
+                        parent.nodes.sort( sortNodes );
+                    }
+                    else
+                    {
+                        nodes.push( node );
+                        nodes.sort( sortNodes );
+                    }
+                }
+                else
+                {
+                    // TODO Only flag nodes which have actually changed
+                    node.changed = changedNodes[ node.id ] || hasChanged;
+                    node.delete = false;
+                }
+
+                if( child.formatter !== undefined )
+                {
+                    if( formatters[ child.formatter ] !== undefined )
+                    {
+                        node.label = formatters[ child.formatter ]( entry, v );
+                    }
+                }
+
+                if( child.format !== undefined )
+                {
+                    var label = child.format;
+                    var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
+                    label = label.replace( regex, function( match, name )
+                    {
+                        return objectUtils.getUniqueProperty( entry, name, v.indexes );
+                    } );
+                    node.label = label;
+                }
+
+                if( child.icon )
+                {
+                    if( octicons[ child.icon ] )
+                    {
+                        var colour = new vscode.ThemeColor( "foreground" );
+                        var octiconIconPath = path.join( storageLocation, child.icon + ".svg" );
+
+                        if( !fs.existsSync( octiconIconPath ) )
+                        {
+                            var octiconIconDefinition = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" +
+                                octicons[ child.icon ].toSVG( { "xmlns": "http://www.w3.org/2000/svg", "fill": "#C5C5C5" } );
+
+                            fs.writeFileSync( octiconIconPath, octiconIconDefinition );
+                        }
+
+                        node.octicon = octiconIconPath;
+                    }
+
+                    else if( icons[ child.icon ] !== undefined )
+                    {
+                        node.icon = icons[ child.icon ]( entry, v );
+                    }
+                }
+
+                if( child.tooltip )
+                {
+                    var tooltip = child.tooltip;
+                    var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
+                    tooltip = tooltip.replace( regex, function( match, name )
+                    {
+                        return objectUtils.getUniqueProperty( entry, name, v.indexes );
+                    } );
+                    node.tooltip = tooltip;
+                }
+
+                if( node.showChanged && hasChanged )
+                {
+                    changedNodes[ node.id ] = true;
+                    processor._context.globalState.update( 'changedNodes', changedNodes );
+                }
+
+                if( child.children )
+                {
+                    processor.processChildren( processor, icons, formatters, entry, key, hasChanged, child.children, node );
+                }
+
+            }, processor );
+        }, processor );
+    }
+
+    populate( data, icons, formatters, keyField )
+    {
         forEachNode( function( node ) { node.delete = true; }, nodes );
 
         var updatedEntries = [];
@@ -285,8 +414,6 @@ class TreeNodeProvider
         data.map( function( item, index )
         {
             var entry = item.details;
-            var parent;
-            var parents = nodes;
             var hasChanged = false;
 
             var key;
@@ -307,141 +434,7 @@ class TreeNodeProvider
                 }
             }
 
-            for( var level = 0; level < this._structure.length; ++level )
-            {
-                var children = this._structure[ level ].children;
-                children.map( function( child )
-                {
-                    keys.add( child.property );
-
-                    var values = objectUtils.getProperties( entry, child.property );
-
-                    values.map( function( v )
-                    {
-                        var node;
-
-                        if( level > 0 )
-                        {
-                            parent = parents.find( locateNode, {
-                                type: this._structure[ level ].parent,
-                                value: objectUtils.getUniqueProperty( entry, this._structure[ level ].parent )
-                            } );
-                        }
-
-                        if( parent !== undefined )
-                        {
-                            node = parent.nodes.find( locateNode, { type: child.property, value: v.value } );
-                        }
-                        else
-                        {
-                            node = nodes.find( locateNode, { type: child.property, value: v.value } );
-                        }
-
-                        if( node === undefined )
-                        {
-                            var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
-
-                            node = {
-                                source: entry,
-                                entry: key,
-                                level: level,
-                                value: v.value,
-                                label: v.value,
-                                type: child.property,
-                                id: id,
-                                visible: true,
-                                showChanged: child.showChanged,
-                                hasContextMenu: child.hasContextMenu,
-                                nodes: [],
-                                changed: ( changedNodes[ id ] === true || hasChanged )
-                            };
-
-                            if( level === 0 )
-                            {
-                                nodes.push( node );
-                                nodes.sort( sortNodes );
-                            }
-                            else
-                            {
-                                node.parent = parent;
-                                parent.nodes.push( node );
-                                parent.nodes.sort( sortNodes );
-                            }
-                        }
-                        else
-                        {
-                            // TODO Only flag nodes which have actually changed
-                            node.changed = changedNodes[ node.id ] || hasChanged;
-                            node.delete = false;
-                        }
-
-                        if( child.formatter !== undefined )
-                        {
-                            if( formatters[ child.formatter ] !== undefined )
-                            {
-                                node.label = formatters[ child.formatter ]( entry, v );
-                            }
-                        }
-
-                        if( child.format !== undefined )
-                        {
-                            var label = child.format;
-                            var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
-                            label = label.replace( regex, function( match, name )
-                            {
-                                return objectUtils.getUniqueProperty( entry, name, v.indexes );
-                            } );
-                            node.label = label;
-                        }
-
-                        if( child.icon )
-                        {
-                            if( octicons[ child.icon ] )
-                            {
-                                var colour = new vscode.ThemeColor( "foreground" );
-                                var octiconIconPath = path.join( storageLocation, child.icon + ".svg" );
-
-                                if( !fs.existsSync( octiconIconPath ) )
-                                {
-                                    var octiconIconDefinition = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" +
-                                        octicons[ child.icon ].toSVG( { "xmlns": "http://www.w3.org/2000/svg", "fill": "#C5C5C5" } );
-
-                                    fs.writeFileSync( octiconIconPath, octiconIconDefinition );
-                                }
-
-                                node.octicon = octiconIconPath;
-                            }
-
-                            else if( icons[ child.icon ] !== undefined )
-                            {
-                                node.icon = icons[ child.icon ]( entry, v );
-                            }
-                        }
-
-                        if( child.tooltip )
-                        {
-                            var tooltip = child.tooltip;
-                            var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
-                            tooltip = tooltip.replace( regex, function( match, name )
-                            {
-                                return objectUtils.getUniqueProperty( entry, name, v.indexes );
-                            } );
-                            node.tooltip = tooltip;
-                        }
-
-                        if( node.showChanged && hasChanged )
-                        {
-                            changedNodes[ node.id ] = true;
-                            this._context.globalState.update( 'changedNodes', changedNodes );
-                        }
-
-                    }, this );
-                }, this );
-                if( level > 0 && parent !== undefined )
-                {
-                    parents = parent.nodes;
-                }
-            }
+            this.processChildren( this, icons, formatters, entry, key, hasChanged, this._structure );
         }, this );
 
         this.prune();
