@@ -1,3 +1,8 @@
+# v0.0.7 - 2019-03-04
+- Build tree recursively instead of in layers
+- Add support for comments
+- Make sort an optional property
+
 # v0.0.6 - 2019-02-11
 - Mark children as read when marking nodes read in the tree
 
