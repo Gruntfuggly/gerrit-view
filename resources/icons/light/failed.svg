@@ -1,0 +1,28 @@
+﻿<svg id="SvgjsSvg1001" width="288" height="288"
+    xmlns="http://www.w3.org/2000/svg" version="1.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:svgjs="http://svgjs.com/svgjs">
+    <defs id="SvgjsDefs1002"></defs>
+    <g id="SvgjsG1008" transform="matrix(0.9167,0,0,0.9167,11.994600061035158,11.99521143951418)">
+        <!--?xml version="1.0" encoding="UTF-8"?-->
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Cross" x="0px" y="0px" viewBox="3 3 20 20" xml:space="preserve" width="388" height="388">
+            <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" fill="red" class="color000 svgShape"></path>
+            <metadata>
+                <rdf:rdf
+                    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+                    xmlns:dc="http://purl.org/dc/elements/1.1/">
+                    <rdf:description about="https://iconscout.com/legal#licenses" dc:title="cross" dc:description="cross" dc:publisher="Iconscout" dc:date="2017-09-14" dc:format="image/svg+xml" dc:language="en">
+                        <dc:creator>
+                            <rdf:bag>
+                                <rdf:li>Daniel Bruce</rdf:li>
+                            </rdf:bag>
+                        </dc:creator>
+                    </rdf:description>
+                </rdf:rdf>
+            </metadata>
+        </svg>
+    </g>
+</svg>

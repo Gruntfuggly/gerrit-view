@@ -1,0 +1,15 @@
+{
+    "workbench.colorCustomizations": {
+        "editor.background": "#000",
+        "activityBar.background": "#08351A",
+        "titleBar.activeBackground": "#0B4B24",
+        "titleBar.activeForeground": "#F0FDF5"
+    },
+    "awooga.originalColorCustomizations": {
+        "editor.background": "#000",
+        "activityBar.background": "#08351A",
+        "titleBar.activeBackground": "#0B4B24",
+        "titleBar.activeForeground": "#F0FDF5"
+    },
+    "ubertab.enabled": false
+}

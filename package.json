@@ -1,0 +1,235 @@
+{
+    "name": "gerrit-view",
+    "displayName": "Gerrit View",
+    "description": "Show the gerrit dashboard in a tree view",
+    "keywords": [],
+    "version": "0.0.1",
+    "icon": "resources/gerrit-view.png",
+    "publisher": "Gruntfuggly",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "repository": "https://github.com/Gruntfuggly/gerrit-view",
+    "scripts": {},
+    "categories": [
+        "SCM Providers",
+        "Other"
+    ],
+    "keywords": [
+        "gerrit",
+        "git",
+        "scm",
+        "review"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "id": "gerrit-view",
+                    "name": "Gerrit",
+                    "when": "gerrit-view-tree-built == true && gerrit-view-in-explorer == true"
+                }
+            ],
+            "scm": [
+                {
+                    "id": "gerrit-view",
+                    "name": "Gerrit",
+                    "when": "gerrit-view-tree-built == true"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "gerrit-view.clearAll",
+                    "when": "view =~ /gerrit-view/ && gerrit-view-has-changed == true",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "gerrit-view.showChangedOnly",
+                    "when": "view =~ /gerrit-view/ && gerrit-view-show-changed-only == false",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "gerrit-view.showAll",
+                    "when": "view =~ /gerrit-view/ && gerrit-view-show-changed-only == true",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "gerrit-view.filter",
+                    "when": "view =~ /gerrit-view/ && gerrit-view-filtered == false",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "gerrit-view.filterClear",
+                    "when": "view =~ /gerrit-view/ && gerrit-view-filtered == true",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "gerrit-view.refresh",
+                    "when": "view =~ /gerrit-view/",
+                    "group": "navigation@4"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "gerrit-view.openInBrowser",
+                    "when": "view =~ /gerrit-view/ && viewItem == showMenu"
+                },
+                {
+                    "command": "gerrit-view.markAsChanged",
+                    "when": "view =~ /gerrit-view/ && viewItem == showMenu"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "gerrit-view.showGerritView",
+                "title": "Show Tree View",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/tree.svg",
+                    "light": "resources/icons/light/tree.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.refresh",
+                "title": "Refresh",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/refresh.svg",
+                    "light": "resources/icons/light/refresh.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.filter",
+                "title": "Filter Tree",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/filter.svg",
+                    "light": "resources/icons/light/filter.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.filterClear",
+                "title": "Clear Filter",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/clear-filter.svg",
+                    "light": "resources/icons/light/clear-filter.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.showChangedOnly",
+                "title": "Show Changed Only",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/empty-star.svg",
+                    "light": "resources/icons/light/empty-star.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.showAll",
+                "title": "Show All",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/star.svg",
+                    "light": "resources/icons/light/star.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.clearAll",
+                "title": "Clear All",
+                "category": "Gerrit View",
+                "icon": {
+                    "dark": "resources/icons/dark/tick.svg",
+                    "light": "resources/icons/light/tick.svg"
+                }
+            },
+            {
+                "command": "gerrit-view.select",
+                "title": "Select Entry",
+                "category": "Gerrit View"
+            },
+            {
+                "command": "gerrit-view.openInBrowser",
+                "title": "Open change set in browser",
+                "category": "Gerrit View"
+            },
+            {
+                "command": "gerrit-view.markAsChanged",
+                "title": "Mark as Changed",
+                "category": "Gerrit View"
+            },
+            {
+                "command": "gerrit-view.setQuery",
+                "title": "Set Query",
+                "category": "Gerrit View"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Gerrit View",
+            "properties": {
+                "gerrit-view.server": {
+                    "type": "string",
+                    "markdownDescription": "Your Gerrit server hostname"
+                },
+                "gerrit-view.port": {
+                    "type": "number",
+                    "default": 29418,
+                    "markdownDescription": "Port number for your Gerrit server"
+                },
+                "gerrit-view.pathToSshKey": {
+                    "type": "string",
+                    "default": ".ssh/id_rsa",
+                    "markdownDescription": "Path to your ssh key"
+                },
+                "gerrit-view.queryBufferSize": {
+                    "type": "number",
+                    "default": 200,
+                    "markdownDescription": "Size of query buffer in kilobytes. Increase this if you expect lots of query results."
+                },
+                "gerrit-view.options": {
+                    "type": "string",
+                    "default": "--current-patch-set",
+                    "markdownDescription": "Query options"
+                },
+                "gerrit-view.query": {
+                    "type": "string",
+                    "default": "status:open",
+                    "markdownDescription": "Query for retrieving data"
+                },
+                "gerrit-view.debug": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Create a debug channel in the Output view"
+                },
+                "gerrit-view.showInExplorer": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Show the tree in the explorer view"
+                },
+                "gerrit-view.filterCaseSensitive": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Set to true if you want the view filtering to be case sensitive"
+                },
+                "gerrit-view.autoRefresh": {
+                    "type": "number",
+                    "default": 60,
+                    "markdownDescription": "Automatically refresh the tree after this many seconds. Set to 0 to disable."
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "micromatch": "^3.1.10",
+        "node-ssh": "^5.1.2",
+        "octicons": "^7.4.0"
+    }
+}
