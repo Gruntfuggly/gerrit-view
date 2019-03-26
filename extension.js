@@ -152,6 +152,7 @@ function activate( context )
     {
         currentFilter = undefined;
         context.workspaceState.update( 'filtered', false );
+        context.workspaceState.update( 'filter', {} );
         provider.clearFilter();
         refresh();
     }
@@ -224,7 +225,10 @@ function activate( context )
 
             debug( results.length + " entries, " + changed.length + " changed " + ( changed.length > 0 ? ( "(" + changed.join( "," ) + ")" ) : "" ) );
 
-            provider.filter( context.workspaceState.get( 'filter', {} ) );
+            var filter = context.workspaceState.get( 'filter', {} );
+
+            debug( "Filter: " + JSON.stringify( filter ) );
+            provider.filter( filter );
 
             if( changed.length > 0 )
             {
@@ -412,6 +416,11 @@ function activate( context )
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.filterClear', clearFilter ) );
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.refresh', getGerritData ) );
+        context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.resetCache', function()
+        {
+            provider.reset();
+            getGerritData();
+        } ) );
 
         context.subscriptions.push( vscode.window.onDidChangeWindowState( function( e )
         {

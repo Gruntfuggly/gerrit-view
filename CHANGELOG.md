@@ -1,3 +1,7 @@
+# v0.0.8 - 2019-03-26
+- Fix clear filter
+- Add reset cache command
+
 # v0.0.7 - 2019-03-04
 - Build tree recursively instead of in layers
 - Add support for comments

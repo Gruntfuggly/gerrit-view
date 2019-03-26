@@ -2,7 +2,7 @@
     "name": "gerrit-view",
     "displayName": "Gerrit View",
     "description": "Show the gerrit dashboard in a tree view",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "icon": "resources/gerrit-view.png",
     "publisher": "Gruntfuggly",
     "engines": {
@@ -167,6 +167,11 @@
             {
                 "command": "gerrit-view.setQuery",
                 "title": "Set Query",
+                "category": "Gerrit View"
+            },
+            {
+                "command": "gerrit-view.resetCache",
+                "title": "Reset Cache",
                 "category": "Gerrit View"
             }
         ],

@@ -577,6 +577,14 @@ class TreeNodeProvider
         changedNodes = this._context.globalState.get( 'changedNodes', {} );
         hashes = this._context.globalState.get( 'hashes', {} );
     }
+
+    reset()
+    {
+        this._context.globalState.update( 'changedNodes', {} );
+        this._context.globalState.update( 'hashes', {} );
+        this.sync();
+    }
+
 }
 
 exports.TreeNodeProvider = TreeNodeProvider;
