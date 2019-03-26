@@ -83,12 +83,25 @@ function activate( context )
                                         },
                                         {
                                             property: "comments",
-                                            format: "Comments",
+                                            format: "History",
                                             showChanged: true,
                                             children: [
                                                 {
                                                     property: "comments.message",
                                                     tooltip: "${comments.message}"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            property: "patchSets.comments.message",
+                                            format: "Comment: ${patchSets.comments.message}",
+                                            children: [
+                                                {
+                                                    property: "patchSets.comments.reviewer.name",
+                                                },
+                                                {
+                                                    property: "patchSets.comments.file", 
+                                                    format: "Line ${patchSets.comments.line} of ${patchSets.comments.file}"
                                                 }
                                             ]
                                         }
