@@ -1,3 +1,7 @@
+# v0.0.9 - 2019-04-05
+- Use lowercase username (thanks to [orgads](https://github.com/orgads))
+- Add option to override username
+
 # v0.0.8 - 2019-03-26
 - Fix clear filter
 - Add reset cache command

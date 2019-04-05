@@ -52,6 +52,7 @@ The default query is `status:open` which will return open change sets from all p
 |---------------------------------|-----------------------|---------------------------------------------------------------------------------------|
 | gerrit-view.server              |                       | Your Gerrit server hostname.                                                          |
 | gerrit-view.port                | 29418                 | Port number for your Gerrit server.                                                   |
+| gerrit-view.username            | (your username)       | Username to sign in to your Gerrit server.                                            |
 | gerrit-view.pathToSshKey        | ".ssh/id_rsa"         | Path to your ssh key.                                                                 |
 | gerrit-view.queryBufferSize     | 200                   | Size of query buffer in kilobytes. Increase this if you expect lots of query results. |
 | gerrit-view.options             | "--current-patch-set" | Query options.                                                                        |

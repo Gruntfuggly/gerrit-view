@@ -2,7 +2,7 @@
     "name": "gerrit-view",
     "displayName": "Gerrit View",
     "description": "Show the gerrit dashboard in a tree view",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "icon": "resources/gerrit-view.png",
     "publisher": "Gruntfuggly",
     "engines": {
@@ -187,6 +187,10 @@
                     "type": "number",
                     "default": 29418,
                     "markdownDescription": "Port number for your Gerrit server"
+                },
+                "gerrit-view.username": {
+                    "type": "string",
+                    "markdownDescription": "Username for signing in to your Gerrit server (defaults to your operating system username)"
                 },
                 "gerrit-view.pathToSshKey": {
                     "type": "string",

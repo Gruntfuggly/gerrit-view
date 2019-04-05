@@ -190,7 +190,13 @@ function activate( context )
                 keyFile: path.join( os.homedir(), config.get( "pathToSshKey" ) )
             };
 
-            gerrit.run( query, { outputChannel: outputChannel, maxBuffer: config.get( "queryBufferSize" ) } ).then( function( results )
+            var options = {
+                outputChannel: outputChannel,
+                maxBuffer: config.get( "queryBufferSize" ),
+                username: config.get( "username" )
+            };
+
+            gerrit.run( query, options ).then( function( results )
             {
                 if( results.length > 0 )
                 {
