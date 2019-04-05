@@ -50,7 +50,7 @@ module.exports.run = function run( query, options )
     {
         ssh.connect( {
             host: query.server,
-            username: os.userInfo().username,
+            username: os.userInfo().username.toLowerCase(),
             port: query.port,
             privateKey: query.keyFile
         } ).then( function()
