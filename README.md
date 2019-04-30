@@ -12,6 +12,12 @@ The extension assumes that Jenkins is being used for continuous integration.
 
 TODO: Provide access to the tree structure configuration.
 
+### Tree Icons
+
+Some elements of the tree have icons. A green tick indicates a passed build with a red cross indicating a failure. If the build is in progress, a timer indicator is shown.
+
+Scores are shown with a green background for positive (+1, +2) and a red background for negative (-1, -2).
+
 ## Controls
 
 The view title bar contains the following buttons:

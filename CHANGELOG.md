@@ -1,3 +1,6 @@
+# v0.0.10 - 2019-04-30
+- Add descriptions of icons to README.md
+
 # v0.0.9 - 2019-04-05
 - Use lowercase username (thanks to [orgads](https://github.com/orgads))
 - Add option to override username
