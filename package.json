@@ -197,6 +197,11 @@
                     "default": ".ssh/id_rsa",
                     "markdownDescription": "Path to your ssh key"
                 },
+                "gerrit-view.useSshAgent": {
+                    "type": "boolean",
+                    "markdownDescription": "Use ssh agent to get your key",
+                    "default": false
+                },
                 "gerrit-view.queryBufferSize": {
                     "type": "number",
                     "default": 200,

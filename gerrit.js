@@ -52,7 +52,8 @@ module.exports.run = function run( query, options )
             host: query.server,
             username: options.username ? options.username : os.userInfo().username.toLowerCase(),
             port: query.port,
-            privateKey: query.keyFile
+            privateKey: query.keyFile,
+            agent: query.agent
         } ).then( function()
         {
             debug( JSON.stringify( query ) );

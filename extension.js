@@ -187,7 +187,8 @@ function activate( context )
                 command: "gerrit query",
                 query: config.get( "query" ),
                 options: config.get( "options" ),
-                keyFile: path.join( os.homedir(), config.get( "pathToSshKey" ) )
+                keyFile: config.get( "pathToSshKey" ) ? path.join( os.homedir(), config.get( "pathToSshKey" ) ) : null,
+                agent: config.get( "useSshAgent" ) ? process.env.SSH_AUTH_SOCK : null
             };
 
             var options = {
