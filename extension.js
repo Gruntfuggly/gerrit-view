@@ -35,7 +35,7 @@ function activate( context )
                     sort: true,
                     children: [
                         {
-                            property: "status",
+                            property: "owner.name",
                             sort: true,
                             children: [
                                 {
