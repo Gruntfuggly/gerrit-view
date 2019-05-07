@@ -217,6 +217,11 @@
                     "default": "status:open",
                     "markdownDescription": "Query for retrieving data"
                 },
+                "gerrit-view.approvalNumber": {
+                    "type": "number",
+                    "default": 1,
+                    "markdownDescription": "Number of reviews needed to approve a change"
+                },
                 "gerrit-view.debug": {
                     "type": "boolean",
                     "default": false,

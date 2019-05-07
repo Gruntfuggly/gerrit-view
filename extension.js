@@ -284,12 +284,24 @@ function activate( context )
 
     function register()
     {
+        var scoreToName = ( score ) =>
+        {
+            switch( score )
+            {
+                case -2: return "minus-two";
+                case -1: return "minus-one";
+                case 1: return "plus-one";
+                case 2: return "plus-two";
+            }
+            return null;
+        };
+ 
         icons.overallScore = function( entry )
         {
             var name;
             var built = false;
-            var finished = false;
-            var score = 0;
+            var failed = false;
+            var scoresByType = new Map();
 
             if( entry.currentPatchSet && entry.currentPatchSet.approvals !== undefined )
             {
@@ -300,7 +312,7 @@ function activate( context )
                         built = true;
                     }
 
-                    if( finished === false )
+                    if( failed === false )
                     {
                         var approvalScore = parseInt( approval.value );
 
@@ -308,28 +320,30 @@ function activate( context )
                         {
                             if( approvalScore === -1 )
                             {
-                                name = "failed";
-                                finished = true;
-                            }
-                            else if( approvalScore === 1 )
-                            {
-                                name = "verified";
+                                failed = true;
                             }
                         }
-                        if( approval.type === "Code-Review" )
+                        else
                         {
-                            if( approvalScore === -2 )
+                            if ( scoresByType.has( approval.type ) === false )
                             {
-                                name = "minus-two";
-                                finished = true;
+                                scoresByType.set( approval.type, null );
                             }
-                            else if( approvalScore === -1 && score < 2 )
+                            if( approvalScore === -2 || scoresByType.get(approval.type) === -2 )
                             {
-                                score = approvalScore;
+                                scoresByType.set( approval.type, -2 );
                             }
-                            else if( approvalScore > 0 )
+                            else if( approvalScore === -1 && scoresByType.get(approval.type) < 2 )
                             {
-                                score = approvalScore;
+                                 scoresByType.set( approval.type, -1 );
+                            }
+                            else if( approvalScore === 1 && scoresByType.get(approval.type) < 2 && scoresByType.get(approval.type) > -1 )
+                            {
+                                 scoresByType.set( approval.type, 1 );
+                            }
+                            else if( approvalScore === 2 )
+                            {
+                                scoresByType.set( approval.type, 2 );
                             }
                         }
                     }
@@ -340,14 +354,19 @@ function activate( context )
             {
                 name = "building";
             }
+            else if( failed === true )
+            {
+                name = "failed";
+            }
+            else if( scoresByType.size < parseInt( vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'approvalNumber' ) ) )
+            {
+                var minScore = Array.from( scoresByType.values() ).reduce( ( acc, val ) => val < 2 ? Math.min( acc, val ) : acc, null );
+                name = scoreToName( minScore ) || "verified";
+            }
             else
             {
-                switch( score )
-                {
-                    case 2: name = "plus-two"; break;
-                    case 1: name = "plus-one"; break;
-                    case -1: name = "minus-one"; break;
-                }
+                var minScore = Array.from( scoresByType.values() ).reduce( ( acc, val ) => Math.min( acc, val ) );
+                name = scoreToName( minScore );
             }
 
             return name;
@@ -356,16 +375,7 @@ function activate( context )
         icons.score = function( entry, property )
         {
             var value = parseInt( objectUtils.getUniqueProperty( entry, "currentPatchSet.approvals.value", property.indexes ) );
-            var name;
-
-            switch( value )
-            {
-                case -2: name = "minus-two"; break;
-                case -1: name = "minus-one"; break;
-                case 1: name = "plus-one"; break;
-                case 2: name = "plus-two"; break;
-            }
-
+            var name = scoreToName( value );
             return name;
         };
 
