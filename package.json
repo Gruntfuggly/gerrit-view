@@ -192,6 +192,10 @@
                     "type": "string",
                     "markdownDescription": "Username for signing in to your Gerrit server (defaults to your operating system username)"
                 },
+                "gerrit-view.password": {
+                    "type": "string",
+                    "markdownDescription": "Password for signing in to your Gerrit server"
+                },
                 "gerrit-view.pathToSshKey": {
                     "type": "string",
                     "default": ".ssh/id_rsa",
