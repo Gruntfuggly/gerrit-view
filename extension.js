@@ -1,6 +1,7 @@
 /* jshint esversion:6 */
 
 var vscode = require( 'vscode' );
+var fs = require( 'fs' );
 var path = require( 'path' );
 var os = require( 'os' );
 var gerrit = require( './gerrit.js' );
@@ -23,6 +24,31 @@ function toString( date )
 
 function activate( context )
 {
+    var outputChannel;
+
+    function resetOutputChannel()
+    {
+        if( outputChannel )
+        {
+            outputChannel.dispose();
+            outputChannel = undefined;
+        }
+        if( vscode.workspace.getConfiguration( 'gerrit-view' ).debug === true )
+        {
+            outputChannel = vscode.window.createOutputChannel( "Gerrit View" );
+        }
+    }
+
+    function debug( text )
+    {
+        if( outputChannel )
+        {
+            outputChannel.appendLine( text );
+        }
+    }
+
+    resetOutputChannel();
+
     var structure = [
         {
             property: "project",
@@ -102,37 +128,28 @@ function activate( context )
         }
     ];
 
+    var treeConfigFile = vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'treeConfigFile' );
+    if( treeConfigFile !== "" )
+    {
+        try
+        {
+            structure = JSON.parse( fs.readFileSync( treeConfigFile ) );
+        }
+        catch( e )
+        {
+            debug( "Failed to load " + treeConfigFile + ":" + e );
+            debug( "Using default tree structure" );
+        }
+    }
+
     var provider = new tree.TreeNodeProvider( context, structure );
 
     var gerritViewExplorer = vscode.window.createTreeView( "gerrit-view-explorer", { treeDataProvider: provider, showCollapseAll: true } );
     var gerritViewScm = vscode.window.createTreeView( "gerrit-view-scm", { treeDataProvider: provider, showCollapseAll: true } );
 
-    var outputChannel;
-
     context.subscriptions.push( provider );
     context.subscriptions.push( gerritViewExplorer );
     context.subscriptions.push( gerritViewScm );
-
-    function resetOutputChannel()
-    {
-        if( outputChannel )
-        {
-            outputChannel.dispose();
-            outputChannel = undefined;
-        }
-        if( vscode.workspace.getConfiguration( 'gerrit-view' ).debug === true )
-        {
-            outputChannel = vscode.window.createOutputChannel( "Gerrit View" );
-        }
-    }
-
-    function debug( text )
-    {
-        if( outputChannel )
-        {
-            outputChannel.appendLine( text );
-        }
-    }
 
     function setContext()
     {
@@ -295,7 +312,7 @@ function activate( context )
             }
             return null;
         };
- 
+
         icons.overallScore = function( entry )
         {
             var name;
@@ -325,21 +342,21 @@ function activate( context )
                         }
                         else
                         {
-                            if ( scoresByType.has( approval.type ) === false )
+                            if( scoresByType.has( approval.type ) === false )
                             {
                                 scoresByType.set( approval.type, null );
                             }
-                            if( approvalScore === -2 || scoresByType.get(approval.type) === -2 )
+                            if( approvalScore === -2 || scoresByType.get( approval.type ) === -2 )
                             {
                                 scoresByType.set( approval.type, -2 );
                             }
-                            else if( approvalScore === -1 && scoresByType.get(approval.type) < 2 )
+                            else if( approvalScore === -1 && scoresByType.get( approval.type ) < 2 )
                             {
-                                 scoresByType.set( approval.type, -1 );
+                                scoresByType.set( approval.type, -1 );
                             }
-                            else if( approvalScore === 1 && scoresByType.get(approval.type) < 2 && scoresByType.get(approval.type) > -1 )
+                            else if( approvalScore === 1 && scoresByType.get( approval.type ) < 2 && scoresByType.get( approval.type ) > -1 )
                             {
-                                 scoresByType.set( approval.type, 1 );
+                                scoresByType.set( approval.type, 1 );
                             }
                             else if( approvalScore === 2 )
                             {
@@ -511,8 +528,6 @@ function activate( context )
         context.subscriptions.push( outputChannel );
 
         vscode.commands.executeCommand( 'setContext', 'gerrit-view-in-explorer', vscode.workspace.getConfiguration( 'gerrit-view' ).showInExplorer );
-
-        resetOutputChannel();
 
         setContext();
 

@@ -241,6 +241,10 @@
                     "type": "number",
                     "default": 60,
                     "markdownDescription": "Automatically refresh the tree after this many seconds. Set to 0 to disable."
+                },
+                "gerrit-view.treeConfigFile": {
+                    "type": "string",
+                    "markdownDescription": "A json file containing the structural definition of the tree"
                 }
             }
         }
