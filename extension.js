@@ -437,8 +437,6 @@ function activate( context )
                 provider.setChanged( node, false );
                 setContext();
             }
-            debug( node.source.url );
-            vscode.commands.executeCommand( 'vscode.open', vscode.Uri.parse( node.source.url ) );
         } ) );
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.markAsChanged', ( node ) =>
