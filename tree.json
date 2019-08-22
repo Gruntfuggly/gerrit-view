@@ -23,6 +23,21 @@
                                 "tooltip": "${commitMessage}",
                                 "children": [
                                     {
+                                        "property": "patchSets.number",
+                                        "format": "Patch Set ${patchSets.number}",
+                                        "sort": true,
+                                        "children": [
+                                            {
+                                                "property": "patchSets.comments.file",
+                                                "children": [
+                                                    {
+                                                        "property": "patchSets.comments.message"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
                                         "property": "currentPatchSet.number",
                                         "sort": true,
                                         "format": "Patch set: ${currentPatchSet.number}",
