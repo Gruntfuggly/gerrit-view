@@ -8,12 +8,14 @@ function append( target, source )
     return target.length > 0 ? target + "." + source : source;
 }
 
-function getProperties( object, path, results, expandedPath, indexes )
+function getProperties( object, path,
+    // parentIndexes,
+    results, expandedPath, indexes )
 {
     if( results === undefined )
     {
         results = [];
-        indexes = "";
+        indexes = [ -1 ];
         expandedPath = "";
     }
 
@@ -29,11 +31,16 @@ function getProperties( object, path, results, expandedPath, indexes )
         {
             o.map( function( c, index )
             {
-                getProperties( c, p.substr( dot + 1 ), results, expandedPath + "[" + index + "]", ( indexes + " " + index ).trim() );
+                var indexesCopy = indexes.slice();
+                indexesCopy.push( index );
+                getProperties( c, p.substr( dot + 1 ),
+                    // parentIndexes,
+                    results, expandedPath + "[" + index + "]", indexesCopy );
             } );
         }
         else
         {
+            indexes.push( -1 );
             p = p.substr( dot + 1 );
             dot = p.indexOf( "." );
         }
@@ -50,7 +57,10 @@ function getProperties( object, path, results, expandedPath, indexes )
 
 function getUniqueProperty( object, path, indexes )
 {
-    var indexList = indexes ? indexes.split( " " ) : undefined;
+    var indexList = indexes ? indexes.filter( function( i )
+    {
+        return i != -1;
+    } ) : undefined;
     var o = object;
     var p = path;
     var dot = p.indexOf( "." );
@@ -59,7 +69,7 @@ function getUniqueProperty( object, path, indexes )
         o = o[ p.substr( 0, dot ) ];
         if( isArray( o ) )
         {
-            o = o[ parseInt( indexList.shift() ) ];
+            o = o[ indexList ];
         }
         p = p.substr( dot + 1 );
         dot = p.indexOf( "." );
