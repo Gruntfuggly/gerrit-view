@@ -215,6 +215,7 @@ class TreeNodeProvider
             treeItem.tooltip = node.tooltip;
         }
 
+        treeItem.tooltip = node.id;
         treeItem.command = {
             command: "gerrit-view.select",
             title: "",
@@ -275,18 +276,24 @@ class TreeNodeProvider
         forEachNode( function( e ) { e.visible = true; }, nodes );
     }
 
+    findParent( path, label )
+    {
+    }
+
     processChildren( processor, icons, formatters, entry, key, hasChanged, children, parent )
     {
         var locateNode = function( node )
         {
-            return node.id === this;
+            // return node.id === this;
+            return node.rawLabel === this;
         };
 
         children.map( function( child )
         {
             keys.add( child.property );
 
-            var values = objectUtils.getProperties( entry, child.property );
+            // var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes : [] );
+            var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
 
             values.map( function( v )
             {
@@ -295,25 +302,36 @@ class TreeNodeProvider
                 // var sanitizedPathElement = sanitizePath( v.expandedPath );
                 // var id = parent ? ( parent.id + "." + sanitizedPathElement ) : sanitizedPathElement;
                 var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
+                // var id = "0";
+                // if( parent )
+                // {
+                //     // id = parent.id + "/" + ( v.merge ? "*" : parent.nodes.length + 1 );
+                //     // id = parent.id + "/" + ( parent.nodes.length + 1 );
+                // }
+
+                var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
 
                 if( parent !== undefined )
                 {
-                    node = parent.nodes.find( locateNode, id );
+                    // node = parent.nodes.find( locateNode, id );
+                    node = parent.nodes.find( locateNode, label );
                 }
                 else
                 {
-                    node = nodes.find( locateNode, id );
+                    // node = nodes.find( locateNode, id );
+                    node = nodes.find( locateNode, label );
                 }
 
                 if( node === undefined )
                 {
-                    var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
-
                     node = {
                         source: entry,
                         entry: key,
                         value: v.value,
+                        expandedPath: v.expandedPath,
+                        indexes: v.indexes,
                         label: label,
+                        rawLabel: label,
                         type: child.property,
                         id: id,
                         visible: true,

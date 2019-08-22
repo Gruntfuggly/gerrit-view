@@ -8,9 +8,7 @@ function append( target, source )
     return target.length > 0 ? target + "." + source : source;
 }
 
-function getProperties( object, path,
-    // parentIndexes,
-    results, expandedPath, indexes )
+function getProperties( object, path, parentIndexes, results, expandedPath, indexes )
 {
     if( results === undefined )
     {
@@ -29,13 +27,15 @@ function getProperties( object, path,
         o = o[ subPath ];
         if( isArray( o ) )
         {
+            var parentIndex = parentIndexes.length > 0 ? parentIndexes[ 0 ] : -1;
             o.map( function( c, index )
             {
-                var indexesCopy = indexes.slice();
-                indexesCopy.push( index );
-                getProperties( c, p.substr( dot + 1 ),
-                    // parentIndexes,
-                    results, expandedPath + "[" + index + "]", indexesCopy );
+                if( parentIndex === -1 || index === parentIndex )
+                {
+                    var indexesCopy = indexes.slice();
+                    indexesCopy.push( index );
+                    getProperties( c, p.substr( dot + 1 ), parentIndexes.slice( 1 ), results, expandedPath + "[" + index + "]", indexesCopy );
+                }
             } );
         }
         else
@@ -69,7 +69,7 @@ function getUniqueProperty( object, path, indexes )
         o = o[ p.substr( 0, dot ) ];
         if( isArray( o ) )
         {
-            o = o[ indexList ];
+            o = o[ indexList.shift() ];
         }
         p = p.substr( dot + 1 );
         dot = p.indexOf( "." );
