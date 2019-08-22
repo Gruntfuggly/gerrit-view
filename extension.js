@@ -144,6 +144,7 @@ function activate( context )
             {
                 if( results.length > 0 )
                 {
+                    console.log( JSON.stringify( results, null, 2 ) );
                     buildTree( results );
                 }
                 else
