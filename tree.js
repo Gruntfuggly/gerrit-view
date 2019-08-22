@@ -103,10 +103,9 @@ function sanitizePath( path )
 
 class TreeNodeProvider
 {
-    constructor( _context, _structure )
+    constructor( _context )
     {
         this._context = _context;
-        this._structure = _structure;
 
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this.onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -129,6 +128,11 @@ class TreeNodeProvider
         {
             storageLocation = _context.extensionPath;
         }
+    }
+
+    setStructure( _structure )
+    {
+        this._structure = _structure;
     }
 
     getChildren( node )

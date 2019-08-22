@@ -49,100 +49,26 @@ function activate( context )
 
     resetOutputChannel();
 
-    var structure = [
-        {
-            property: "project",
-            icon: "briefcase",
-            children: [
-                {
-                    property: "branch",
-                    format: "branch: ${branch}",
-                    icon: "git-branch",
-                    sort: true,
-                    children: [
-                        {
-                            property: "owner.name",
-                            sort: true,
-                            children: [
-                                {
-                                    property: "subject",
-                                    sort: true,
-                                    icon: "overallScore",
-                                    showChanged: true,
-                                    format: "${number} ${subject}",
-                                    hasContextMenu: true,
-                                    tooltip: "${commitMessage}",
-                                    children: [
-                                        {
-                                            property: "currentPatchSet.number",
-                                            sort: true,
-                                            format: "Patch set: ${currentPatchSet.number}",
-                                            showChanged: true
-                                        },
-                                        {
-                                            property: "currentPatchSet.approvals.by.name",
-                                            sort: true,
-                                            icon: "score",
-                                            tooltip: "${currentPatchSet.approvals.by.email}",
-                                            showChanged: true
-                                        },
-                                        {
-                                            property: "id",
-                                            format: "ID: ${id}"
-                                        },
-                                        {
-                                            property: "createdOn",
-                                            formatter: "created"
-                                        },
-                                        {
-                                            property: "lastUpdated",
-                                            sort: true,
-                                            formatter: "updated",
-                                            showChanged: true
-                                        },
-                                        {
-                                            property: "owner.name",
-                                            format: "Owner: ${owner.name} (${owner.username})",
-                                            children: [
-                                                { property: "owner.email" }
-                                            ],
-                                        },
-                                        {
-                                            property: "comments",
-                                            format: "Comments",
-                                            showChanged: true,
-                                            children: [
-                                                {
-                                                    property: "comments.message",
-                                                    tooltip: "${comments.message}"
-                                                }
-                                            ]
-                                        }
-                                    ],
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    ];
 
-    var treeConfigFile = vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'treeConfigFile' );
-    if( treeConfigFile !== "" )
+    function loadTreeStructure()
     {
-        try
+        var treeConfigFile = vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'treeConfigFile' );
+        if( treeConfigFile !== "" )
         {
-            structure = JSON.parse( fs.readFileSync( treeConfigFile ) );
-        }
-        catch( e )
-        {
-            debug( "Failed to load " + treeConfigFile + ":" + e );
-            debug( "Using default tree structure" );
+            try
+            {
+                debug( "Reading tree structure from " + treeConfigFile );
+                structure = JSON.parse( fs.readFileSync( treeConfigFile ) );
+            }
+            catch( e )
+            {
+                debug( "Failed to load " + treeConfigFile + ":" + e );
+                debug( "Using default tree structure" );
+            }
         }
     }
 
-    var provider = new tree.TreeNodeProvider( context, structure );
+    var provider = new tree.TreeNodeProvider( context );
 
     var gerritViewExplorer = vscode.window.createTreeView( "gerrit-view-explorer", { treeDataProvider: provider, showCollapseAll: true } );
     var gerritViewScm = vscode.window.createTreeView( "gerrit-view-scm", { treeDataProvider: provider, showCollapseAll: true } );
@@ -245,6 +171,10 @@ function activate( context )
     {
         if( results !== undefined )
         {
+            loadTreeStructure();
+
+            provider.setStructure( structure );
+
             var changed = provider.populate( results, icons, formatters, "number" );
 
             debug( results.length + " entries, " + changed.length + " changed " + ( changed.length > 0 ? ( "(" + changed.join( "," ) + ")" ) : "" ) );
@@ -529,6 +459,7 @@ function activate( context )
 
         setContext();
 
+        loadTreeStructure();
         getGerritData( false );
 
         scheduleRefresh();
