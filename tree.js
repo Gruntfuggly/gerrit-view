@@ -215,9 +215,8 @@ class TreeNodeProvider
             treeItem.tooltip = node.tooltip;
         }
 
-        treeItem.tooltip = node.id;
         treeItem.command = {
-            command: "gerrit-view.select",
+            command: "gerrit-view." + ( node.command ? node.command : "select" ),
             title: "",
             arguments: [ node ]
         };
@@ -292,6 +291,11 @@ class TreeNodeProvider
         {
             keys.add( child.property );
 
+            // if( child.property === "patchSets.comments.message" )
+            // {
+            //     console.log( "wtf" );
+            // }
+
             // var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes : [] );
             var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
 
@@ -301,13 +305,13 @@ class TreeNodeProvider
 
                 // var sanitizedPathElement = sanitizePath( v.expandedPath );
                 // var id = parent ? ( parent.id + "." + sanitizedPathElement ) : sanitizedPathElement;
-                var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
-                // var id = "0";
-                // if( parent )
-                // {
-                //     // id = parent.id + "/" + ( v.merge ? "*" : parent.nodes.length + 1 );
-                //     // id = parent.id + "/" + ( parent.nodes.length + 1 );
-                // }
+                // var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
+                var id = "0";
+                if( parent )
+                {
+                    //     // id = parent.id + "/" + ( v.merge ? "*" : parent.nodes.length + 1 );
+                    id = parent.id + "/" + ( parent.nodes.length + 1 );
+                }
 
                 var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
 
@@ -322,13 +326,14 @@ class TreeNodeProvider
                     node = nodes.find( locateNode, label );
                 }
 
+                // console.log( "found:" + ( node === undefined ) + " " + "label:" + label );
                 if( node === undefined )
                 {
                     node = {
                         source: entry,
                         entry: key,
                         value: v.value,
-                        expandedPath: v.expandedPath,
+                        // expandedPath: v.expandedPath,
                         indexes: v.indexes,
                         label: label,
                         rawLabel: label,
@@ -382,6 +387,20 @@ class TreeNodeProvider
                     node.label = label;
                 }
 
+                if( child.arguments !== undefined )
+                {
+                    node.arguments = [];
+                    child.arguments.map( function( argument )
+                    {
+                        var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
+                        argument = argument.replace( regex, function( match, name )
+                        {
+                            return objectUtils.getUniqueProperty( entry, name, v.indexes );
+                        } );
+                        node.arguments.push( argument );
+                    } );
+                }
+
                 if( child.icon )
                 {
                     if( octicons[ child.icon ] )
@@ -416,6 +435,8 @@ class TreeNodeProvider
                     } );
                     node.tooltip = tooltip;
                 }
+
+                node.command = child.command;
 
                 if( node.showChanged && hasChanged )
                 {
