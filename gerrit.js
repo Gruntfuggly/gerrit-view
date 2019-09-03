@@ -1,5 +1,6 @@
 var nodeSsh = require( 'node-ssh' );
 var os = require( 'os' );
+var fs = require( 'fs' );
 
 var ssh = new nodeSsh();
 
@@ -24,9 +25,10 @@ function formatResults( stdout, debug )
 
     try
     {
-        results = stdout
-            .split( '\n' )
-            .map( ( line ) => new Entry( line ) );
+        results.push( new Entry( stdout ) );
+        // results = stdout
+        //     .split( '\n' )
+        //     .map( ( line ) => new Entry( line ) );
     }
     catch( e )
     {
@@ -48,26 +50,36 @@ module.exports.run = function run( query, options )
 
     return new Promise( function( resolve, reject )
     {
-        ssh.connect( {
-            host: query.server,
-            username: options.username ? options.username : os.userInfo().username.toLowerCase(),
-            port: query.port,
-            privateKey: query.keyFile,
-            agent: query.agent
-        } ).then( function()
+        fs.readFile( "/Users/nige/last-results.json", "utf8", function( err, data )
         {
-            debug( JSON.stringify( query ) );
-            ssh.execCommand( [ query.command, query.query, query.options, "--format JSON" ].join( " " ) ).then( function( result )
+            if( err )
             {
-                resolve( formatResults( result.stdout, debug ) );
-                ssh.dispose();
-            } )
-        }, function( error )
-            {
-                reject( new GerritError( error, "" ) );
-                ssh.dispose();
+                debug( err );
             }
-        );
+            resolve( formatResults( data, debug ) );
+        } );
+
+        // ssh.connect( {
+        //     host: query.server,
+        //     username: options.username ? options.username : os.userInfo().username.toLowerCase(),
+        //     port: query.port,
+        //     privateKey: query.keyFile,
+        //     agent: query.agent
+        // } ).then( function()
+        // {
+        //     debug( JSON.stringify( query ) );
+        //     ssh.execCommand( [ query.command, query.query, query.options, "--format JSON" ].join( " " ) ).then( function( result )
+        //     {
+        //         fs.writeFileSync( "last-results.json", result.stdout );
+        //         resolve( formatResults( result.stdout, debug ) );
+        //         ssh.dispose();
+        //     } )
+        // }, function( error )
+        //     {
+        //         reject( new GerritError( error, "" ) );
+        //         ssh.dispose();
+        //     }
+        // );
     } );
 };
 
