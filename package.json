@@ -87,6 +87,11 @@
         },
         "commands": [
             {
+                "command": "gerrit-view.enterServerHostname",
+                "title": "Enter Server Hostname",
+                "category": "Gerrit View"
+            },
+            {
                 "command": "gerrit-view.showGerritView",
                 "title": "Show Tree View",
                 "category": "Gerrit View",

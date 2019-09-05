@@ -47,9 +47,6 @@ function activate( context )
         }
     }
 
-    resetOutputChannel();
-
-
     function loadTreeStructure()
     {
         var treeConfigFile = vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'treeConfigFile' );
@@ -67,6 +64,8 @@ function activate( context )
             }
         }
     }
+
+    resetOutputChannel();
 
     var provider = new tree.TreeNodeProvider( context );
 
@@ -100,6 +99,45 @@ function activate( context )
         refresh();
     }
 
+    function getGitFolder()
+    {
+        var folder;
+
+        if( vscode.workspace.workspaceFolders.length === 1 )
+        {
+            folder = childProcess.execSync( "git rev-parse --show-toplevel", { cwd: vscode.workspace.workspaceFolders[ 0 ].uri.fsPath, encoding: 'utf8' } ).toString().trim();
+        }
+        else
+        {
+            var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+            folder = config.get( 'gitFolder', "" );
+        }
+
+        if( !folder )
+        {
+            vscode.workspace.showInformationMessage( "Please set the location of your local git repository in your settings." );
+        }
+
+        return folder;
+    }
+
+    function enterServerHostname()
+    {
+        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+        vscode.window.showInputBox( { prompt: "Please enter your gerrit server hostname:" } ).then(
+            function( name )
+            {
+                if( name !== undefined && name.trim().length > 0 )
+                {
+                    debug( "Server hostname: " + name );
+                    showTree = true;
+                    config.update( 'server', name, vscode.ConfigurationTarget.Workspace );
+                }
+                setContext();
+            } );
+    }
+
+
     function getGerritData( refreshRequired )
     {
         if( vscode.window.state.focused !== true )
@@ -107,22 +145,12 @@ function activate( context )
             return;
         }
 
-        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+        // var gitReviewConfig = ini.parse( fs.readFileSync( '.git-review', 'utf-8' ) );
 
-        if( config.get( 'server' ).trim().length === 0 )
-        {
-            showTree = true;
-            setContext();
-            vscode.window.showInputBox( { prompt: "Please enter your gerrit server name:" } ).then(
-                function( name )
-                {
-                    if( name && name.trim().length > 0 )
-                    {
-                        config.update( 'server', name, true );
-                    }
-                } );
-        }
-        else
+        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+        var server = config.get( 'server' ).trim();
+
+        if( server !== '' )
         {
             var query = {
                 port: config.get( "port" ),
@@ -134,7 +162,8 @@ function activate( context )
                 agent: config.get( "useSshAgent" ) ? process.env.SSH_AUTH_SOCK : null
             };
 
-            var options = {
+            var options =
+            {
                 outputChannel: outputChannel,
                 maxBuffer: config.get( "queryBufferSize" ),
                 username: config.get( "username" )
@@ -164,6 +193,10 @@ function activate( context )
             } );
 
             debug( "Last update: " + new Date().toISOString() );
+        } else
+        {
+            showTree = false;
+            setContext();
         }
     }
 
@@ -339,6 +372,8 @@ function activate( context )
             return "Updated: " + toString( date );
         };
 
+        context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.enterServerHostname', enterServerHostname ) );
+
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.filter', function()
         {
             var keys = Array.from( provider.getKeys() );
@@ -366,6 +401,153 @@ function activate( context )
             {
                 provider.setChanged( node, false );
                 setContext();
+            }
+        } ) );
+
+        context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.fetch', ( node ) =>
+        {
+            var localRepo = getGitFolder();
+
+            if( node.arguments && localRepo )
+            {
+                var file = node.arguments[ 0 ];
+                var revision = node.arguments[ 1 ];
+                var changeSet = node.arguments[ 2 ];
+                var patchSet = node.arguments[ 3 ];
+
+                // https://stackoverflow.com/questions/18515488/how-to-check-if-the-commit-exists-in-a-git-repository-by-its-sha-1
+                var foundCommit = false;
+                try
+                {
+                    childProcess.execSync( "git cat-file -t " + revision, { cwd: localRepo } );
+                    foundCommit = true;
+                }
+                catch( e )
+                {
+                }
+
+                if( foundCommit !== true )
+                {
+                    debug( "Commit not currently in repo. Fetching..." );
+                    try
+                    {
+                        var command = "git fetch origin refs/changes/" + changeSet.substr( 2 ) + "/" + changeSet + "/" + patchSet;
+                        childProcess.execSync( command, { cwd: localRepo } );
+                    }
+                    catch( e )
+                    {
+                        console.log( e );
+                        return;
+                    }
+                }
+
+                // https://stackoverflow.com/questions/610208/how-to-retrieve-a-single-file-from-a-specific-revision-in-git
+                var command = "git show " + revision + ":" + file;
+                var fileContent = childProcess.execSync( command, { cwd: localRepo } ).toString();
+
+                contentProvider.setContent( fileContent );
+
+                var uri = vscode.Uri.parse( 'gerrit-view:' + file );
+
+                vscode.workspace.openTextDocument( uri ).then( function( document )
+                {
+                    vscode.window.showTextDocument( document ).then( function( editor )
+                    {
+                        var cs = lastResults.filter( function( c )
+                        {
+                            return c.details.number === changeSet;
+                        } );
+                        var ps = cs[ 0 ].details.patchSets.filter( function( p )
+                        {
+                            return p.number === patchSet;
+                        } );
+                        var comments = ps[ 0 ].comments.filter( function( c )
+                        {
+                            return c.file === file;
+                        } );
+
+                        var authors = {};
+                        var messages = {};
+
+                        var threads = {};
+                        comments.map( function( comment )
+                        {
+                            if( authors[ comment.line ] === undefined )
+                            {
+                                authors[ comment.line ] = [ comment.reviewer.name ];
+                            }
+                            else if( authors[ comment.line ].indexOf( comment.reviewer.name ) === -1 )
+                            {
+                                authors[ comment.line ].push( comment.reviewer.name );
+                            }
+
+                            if( messages[ comment.line ] === undefined )
+                            {
+                                messages[ comment.line ] = comment.reviewer.name + ": " + comment.message;
+                            }
+                            else
+                            {
+                                messages[ comment.line ] += "\n\n" + comment.reviewer.name + ": " + comment.message;
+                            }
+
+                        } );
+
+                        if( decorations[ editor.id ] !== undefined )
+                        {
+                            Object.keys( decorations[ editor.id ] ).map( function( line )
+                            {
+                                decorations[ editor.id ][ line ].dispose();
+                            } );
+                        }
+
+                        decorations[ editor.id ] = {};
+
+                        Object.keys( authors ).map( function( line )
+                        {
+                            var lineNumber = parseInt( line ) - 1;
+                            var startPos = new vscode.Position( lineNumber, 0 );
+                            var endPos = new vscode.Position( lineNumber, editor.document.lineAt( lineNumber ).range.end.character );
+                            var annotationRange = {
+                                range: new vscode.Range( startPos, endPos ),
+                                hoverMessage: "```text\n" + messages[ line ] + "\n```"
+                            };
+
+                            var decoration = decorations[ editor.id ][ line ];
+                            if( decoration === undefined )
+                            {
+                                decoration = vscode.window.createTextEditorDecorationType( {
+                                    overviewRulerLane: vscode.OverviewRulerLane.Full,
+                                    dark: {
+                                        overviewRulerColor: "#008000D0",
+                                        gutterIconPath: context.asAbsolutePath( path.join( "resources/icons", "dark", "comment.svg" ) ),
+                                        gutterIconSize: "contain",
+                                        backgroundColor: "#004000",
+                                        after: {
+                                            backgroundColor: "#008000",
+                                            color: "white",
+                                            contentText: authors[ line ].join( ", " ),
+                                        }
+                                    },
+                                    light: {
+                                        overviewRulerColor: "#008000D0",
+                                        gutterIconPath: context.asAbsolutePath( path.join( "resources/icons", "light", "comment.svg" ) ),
+                                        gutterIconSize: "contain",
+                                        backgroundColor: "#00E000",
+                                        after: {
+                                            backgroundColor: "#008000",
+                                            color: "white",
+                                            contentText: authors[ line ].join( ", " ),
+                                        }
+                                    },
+                                    isWholeLine: true
+                                } );
+                                decorations[ editor.id ][ line ] = decoration;
+                            }
+
+                            editor.setDecorations( decoration, [ annotationRange ] );
+                        } );
+                    } );
+                } );
             }
         } ) );
 
