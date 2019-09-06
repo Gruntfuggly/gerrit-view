@@ -47,7 +47,7 @@ var hasChangedParent = function( node )
         parent = parent.parent;
     }
     return false;
-}
+};
 
 var hasChangedChildren = function( node )
 {
@@ -60,7 +60,7 @@ var hasChangedChildren = function( node )
         } );
     }
     return result;
-}
+};
 
 var isVisible = function( node )
 {

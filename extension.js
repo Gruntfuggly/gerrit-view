@@ -525,6 +525,7 @@ function activate( context )
                     catch( e )
                     {
                         console.log( e );
+                        vscode.window.showErrorMessage( e.message );
                         return;
                     }
                 }
@@ -733,6 +734,8 @@ function activate( context )
 
         scheduleRefresh();
     }
+
+    debug( "Ready" );
 
     register();
 }
