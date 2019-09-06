@@ -4,6 +4,8 @@ var vscode = require( 'vscode' );
 var fs = require( 'fs' );
 var path = require( 'path' );
 var os = require( 'os' );
+var childProcess = require( 'child_process' );
+
 var gerrit = require( './gerrit.js' );
 var tree = require( "./tree.js" );
 var objectUtils = require( "./objectUtils.js" );
@@ -13,6 +15,7 @@ var lastResults;
 var showTree = false;
 var icons = {};
 var formatters = {};
+var decorations = {};
 
 function toString( date )
 {
@@ -372,6 +375,22 @@ function activate( context )
             return "Updated: " + toString( date );
         };
 
+        class GerritViewContentProvider
+        {
+            setContent( content )
+            {
+                this._content = content;
+            }
+            provideTextDocumentContent( uri )
+            {
+                return this._content;
+            }
+        };
+
+        var contentProvider = new GerritViewContentProvider();
+
+        context.subscriptions.push( vscode.workspace.registerTextDocumentContentProvider( 'gerrit-view', contentProvider ) );
+
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.enterServerHostname', enterServerHostname ) );
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.filter', function()
@@ -469,7 +488,6 @@ function activate( context )
                         var authors = {};
                         var messages = {};
 
-                        var threads = {};
                         comments.map( function( comment )
                         {
                             if( authors[ comment.line ] === undefined )
