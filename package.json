@@ -184,6 +184,16 @@
             "type": "object",
             "title": "Gerrit View",
             "properties": {
+                "gerrit-view.disable": {
+                    "type": "string",
+                    "enum": [
+                        "",
+                        "enabled",
+                        "disabled"
+                    ],
+                    "default": "",
+                    "markdownDescription": "Use this to enable/disable the extension per workspace independently of the extension manager."
+                },
                 "gerrit-view.server": {
                     "type": "string",
                     "markdownDescription": "Your Gerrit server hostname"

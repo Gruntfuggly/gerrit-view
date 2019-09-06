@@ -164,12 +164,21 @@ function activate( context )
             return queryArguments;
         }
 
+        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+
         if( vscode.window.state.focused !== true )
         {
             return;
         }
 
-        var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+        var disabled = config.get( 'disabled' );
+        if( disabled === 'disabled' )
+        {
+            debug( "Disabled" );
+            showTree = false;
+            setContext();
+            return;
+        }
         var server = config.get( 'server' ).trim();
         var port = config.get( 'port' );
         var queryArguments = config.get( "query" );
