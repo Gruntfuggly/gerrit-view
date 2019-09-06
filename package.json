@@ -250,11 +250,16 @@
                 "gerrit-view.treeConfigFile": {
                     "type": "string",
                     "markdownDescription": "A json file containing the structural definition of the tree"
+                },
+                "gerrit-view.localRepo": {
+                    "type": "string",
+                    "markdownDescription": "The path to a local copy of the repository, used for showing review comments in files. Defaults to the current workspace repo."
                 }
             }
         }
     },
     "dependencies": {
+        "ini": "^1.3.5",
         "micromatch": "^3.1.10",
         "node-ssh": "^5.1.2",
         "octicons": "^7.4.0"

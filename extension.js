@@ -5,6 +5,7 @@ var fs = require( 'fs' );
 var path = require( 'path' );
 var os = require( 'os' );
 var childProcess = require( 'child_process' );
+var ini = require( 'ini' );
 
 var gerrit = require( './gerrit.js' );
 var tree = require( "./tree.js" );
@@ -113,7 +114,7 @@ function activate( context )
         else
         {
             var config = vscode.workspace.getConfiguration( 'gerrit-view' );
-            folder = config.get( 'gitFolder', "" );
+            folder = config.get( 'localRepo', "" );
         }
 
         if( !folder )
@@ -127,7 +128,10 @@ function activate( context )
     function enterServerHostname()
     {
         var config = vscode.workspace.getConfiguration( 'gerrit-view' );
-        vscode.window.showInputBox( { prompt: "Please enter your gerrit server hostname:" } ).then(
+        vscode.window.showInputBox( {
+            prompt: "Please enter your gerrit server hostname:",
+            value: config.get( 'server' )
+        } ).then(
             function( name )
             {
                 if( name !== undefined && name.trim().length > 0 )
@@ -140,26 +144,74 @@ function activate( context )
             } );
     }
 
-
     function getGerritData( refreshRequired )
     {
+        function replaceOrAdd( queryArguments, parameter, value )
+        {
+            if( queryArguments.indexOf( parameter + ':' ) !== -1 )
+            {
+                var regex = new RegExp( "(" + parameter + ":\\S+)" );
+                queryArguments = queryArguments.replace( regex, function( v )
+                {
+                    return parameter + ':' + value;
+                } );
+            }
+            else
+            {
+                queryArguments += ' ' + parameter + ':' + value;
+            }
+
+            return queryArguments;
+        }
+
         if( vscode.window.state.focused !== true )
         {
             return;
         }
 
-        // var gitReviewConfig = ini.parse( fs.readFileSync( '.git-review', 'utf-8' ) );
-
         var config = vscode.workspace.getConfiguration( 'gerrit-view' );
         var server = config.get( 'server' ).trim();
+        var port = config.get( 'port' );
+        var queryArguments = config.get( "query" );
+
+        var localRepo = getGitFolder();
+        var gitReviewFilename = path.join( localRepo, '.gitreview' );
+        var gitReview;
+        if( fs.existsSync( gitReviewFilename ) )
+        {
+            debug( "Found .gitreview" );
+            gitReview = ini.parse( fs.readFileSync( gitReviewFilename, 'utf-8' ) );
+
+            debug( "Settings: " + JSON.stringify( gitReview.gerrit ) );
+
+            if( gitReview.gerrit )
+            {
+                if( gitReview.gerrit.host )
+                {
+                    server = gitReview.gerrit.host;
+                }
+                if( gitReview.gerrit.port )
+                {
+                    port = gitReview.gerrit.port;
+                }
+                if( gitReview.gerrit.defaultbranch )
+                {
+                    queryArguments = replaceOrAdd( queryArguments, 'branch', gitReview.gerrit.defaultbranch );
+                }
+                if( gitReview.gerrit.project )
+                {
+                    queryArguments = replaceOrAdd( queryArguments, 'project', gitReview.gerrit.project );
+                }
+            }
+        }
 
         if( server !== '' )
         {
             var query = {
-                port: config.get( "port" ),
-                server: config.get( "server" ),
+                port: port,
+                server: server,
                 command: "gerrit query",
-                query: config.get( "query" ),
+                query: queryArguments,
                 options: config.get( "options" ),
                 keyFile: config.get( "pathToSshKey" ) ? path.join( os.homedir(), config.get( "pathToSshKey" ) ) : null,
                 agent: config.get( "useSshAgent" ) ? process.env.SSH_AUTH_SOCK : null
@@ -171,6 +223,9 @@ function activate( context )
                 maxBuffer: config.get( "queryBufferSize" ),
                 username: config.get( "username" )
             };
+
+            debug( "query:" + JSON.stringify( query ) );
+            debug( "options:" + JSON.stringify( options ) );
 
             gerrit.run( query, options ).then( function( results )
             {
@@ -425,7 +480,12 @@ function activate( context )
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.fetch', ( node ) =>
         {
-            var localRepo = getGitFolder();
+            var config = vscode.workspace.getConfiguration( 'gerrit-view' );
+            var localRepo = config.get( 'localRepo' );
+            if( !localRepo )
+            {
+                localRepo = getGitFolder();
+            }
 
             if( node.arguments && localRepo )
             {
