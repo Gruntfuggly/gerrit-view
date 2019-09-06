@@ -1,0 +1,5 @@
+[gerrit]
+host=asl-gerrit.asl.lan
+port=29418
+project=asldev
+defaultbranch=master

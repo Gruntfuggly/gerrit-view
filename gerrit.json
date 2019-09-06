@@ -1,0 +1,602 @@
+{
+    "project": "asldev",
+    "branch": "master",
+    "topic": "ASL0632-ID5333",
+    "id": "I8178ed76cf12add6960d1f2146abd0cb840bb034",
+    "number": "4862",
+    "subject": "ASL0632-ID5333 iVENCS CMS (WP0387) Extend asl-common/TableColumnFilterWidget",
+    "owner": {
+        "name": "Nigel Scott",
+        "email": "nscott@asl-control.co.uk",
+        "username": "nscott"
+    },
+    "url": "https://asl-gerrit.asl.lan:8443/4862",
+    "commitMessage": "ASL0632-ID5333 iVENCS CMS (WP0387) Extend asl-common/TableColumnFilterWidget\n\nAllow filtering on columns with no title in TableColumnFilterWidget.\n\nSome tables have an enable/disable toggle butotn in the first column.\nThe columns doesn\u0027t have a title as it would make the column wider than\nnecessary and the usage of the column should be fairly obvious.\n\nIt is still desirable to filter the table based on the field represented\nby the column however, so this change allows the name of the field to\nbe specified in the UserRole of the column insetad. When generating the\nlist of filters, if the first attempt to get the column name via the\nDisplay Role returns an empty string, instead of skipping the field\nimmediately, it now attempts to get the name from the User Role.\n\nIn order to make this work, the DataSourceTableModel class now stores\nuser role data in a hash, as the QAbstractTableModel doesn\u0027t implement\nit\u0027s own storage via setHeaderData.\n\nChange-Id: I8178ed76cf12add6960d1f2146abd0cb840bb034\n",
+    "createdOn": 1553536910,
+    "lastUpdated": 1553616874,
+    "open": true,
+    "status": "NEW",
+    "comments": [
+        {
+            "timestamp": 1553536910,
+            "reviewer": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "message": "Uploaded patch set 1."
+        },
+        {
+            "timestamp": 1553536916,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1678/ (1/10)"
+        },
+        {
+            "timestamp": 1553536916,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX86Gerrit/1386/ (2/10)"
+        },
+        {
+            "timestamp": 1553536917,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/ToolVCTGerrit/4366/ (3/10)"
+        },
+        {
+            "timestamp": 1553536917,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/DynamicConfigToolGerrit/4881/ (4/10)"
+        },
+        {
+            "timestamp": 1553536917,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSDebugGerrit/4482/ (5/10)"
+        },
+        {
+            "timestamp": 1553536917,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/FirmwareTransferToolGerrit/5912/ (6/10)"
+        },
+        {
+            "timestamp": 1553536917,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSReleaseGerrit/4485/ (7/10)"
+        },
+        {
+            "timestamp": 1553536917,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX64Gerrit/1703/ (8/10)"
+        },
+        {
+            "timestamp": 1553536918,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/IntegratedToolGerrit/6430/ (9/10)"
+        },
+        {
+            "timestamp": 1553536918,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPAGerrit/4597/ (10/10)"
+        },
+        {
+            "timestamp": 1553537845,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 1: Verified+1\n\nBuild Successful \n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX64Gerrit/1703/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSReleaseGerrit/4485/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSDebugGerrit/4482/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX86Gerrit/1386/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/DynamicConfigToolGerrit/4881/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/ToolVCTGerrit/4366/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/FirmwareTransferToolGerrit/5912/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/IntegratedToolGerrit/6430/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/VIPAGerrit/4597/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1678/ : SUCCESS"
+        },
+        {
+            "timestamp": 1553590214,
+            "reviewer": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "message": "Patch Set 2: Commit message was updated."
+        },
+        {
+            "timestamp": 1553590224,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2: -Verified\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1680/ (1/10)"
+        },
+        {
+            "timestamp": 1553590267,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/FirmwareTransferToolGerrit/5914/ (2/10)"
+        },
+        {
+            "timestamp": 1553590296,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/IntegratedToolGerrit/6432/ (3/10)"
+        },
+        {
+            "timestamp": 1553590499,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPAGerrit/4599/ (4/10)"
+        },
+        {
+            "timestamp": 1553590514,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSDebugGerrit/4484/ (5/10)"
+        },
+        {
+            "timestamp": 1553590830,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/ToolVCTGerrit/4368/ (6/10)"
+        },
+        {
+            "timestamp": 1553590865,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/DynamicConfigToolGerrit/4883/ (7/10)"
+        },
+        {
+            "timestamp": 1553590974,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSReleaseGerrit/4487/ (8/10)"
+        },
+        {
+            "timestamp": 1553591216,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX86Gerrit/1388/ (9/10)"
+        },
+        {
+            "timestamp": 1553591235,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX64Gerrit/1705/ (10/10)"
+        },
+        {
+            "timestamp": 1553592201,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 2: Verified+1\n\nBuild Successful \n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX64Gerrit/1705/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSReleaseGerrit/4487/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSDebugGerrit/4484/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX86Gerrit/1388/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/DynamicConfigToolGerrit/4883/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/ToolVCTGerrit/4368/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/FirmwareTransferToolGerrit/5914/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/IntegratedToolGerrit/6432/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/VIPAGerrit/4599/ : SUCCESS\n\nhttp://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1680/ : SUCCESS"
+        },
+        {
+            "timestamp": 1553595269,
+            "reviewer": {
+                "name": "Stephen Warder",
+                "email": "swarder@asl-control.co.uk",
+                "username": "swarder"
+            },
+            "message": "Patch Set 2: Code-Review+1"
+        },
+        {
+            "timestamp": 1553616150,
+            "reviewer": {
+                "name": "Vince Negri",
+                "email": "vnegri@asl-control.co.uk",
+                "username": "vn"
+            },
+            "message": "Patch Set 2: Code-Review-1\n\n(1 comment)"
+        },
+        {
+            "timestamp": 1553616339,
+            "reviewer": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "message": "Uploaded patch set 3."
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/ToolVCTGerrit/4387/ (1/10)"
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/FirmwareTransferToolGerrit/5933/ (2/10)"
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX64Gerrit/1724/ (3/10)"
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/DynamicConfigToolGerrit/4902/ (4/10)"
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/IntegratedToolGerrit/6451/ (5/10)"
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPAGerrit/4618/ (6/10)"
+        },
+        {
+            "timestamp": 1553616351,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 3:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1699/ (7/10)"
+        },
+        {
+            "timestamp": 1553616473,
+            "reviewer": {
+                "name": "Vince Negri",
+                "email": "vnegri@asl-control.co.uk",
+                "username": "vn"
+            },
+            "message": "Patch Set 3: Code-Review-2\n\n(1 comment)"
+        },
+        {
+            "timestamp": 1553616616,
+            "reviewer": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "message": "Uploaded patch set 4: Commit message was updated."
+        },
+        {
+            "timestamp": 1553616626,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 4:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1701/ (1/10)"
+        },
+        {
+            "timestamp": 1553616760,
+            "reviewer": {
+                "name": "Vince Negri",
+                "email": "vnegri@asl-control.co.uk",
+                "username": "vn"
+            },
+            "message": "Patch Set 4:\n\n(1 comment)"
+        },
+        {
+            "timestamp": 1553616774,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 4:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/FirmwareTransferToolGerrit/5935/ (2/10)"
+        },
+        {
+            "timestamp": 1553616783,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 4:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/iVENCSNinjaX64Gerrit/1726/ (3/10)"
+        },
+        {
+            "timestamp": 1553616817,
+            "reviewer": {
+                "name": "Vince Negri",
+                "email": "vnegri@asl-control.co.uk",
+                "username": "vn"
+            },
+            "message": "Removed Code-Review-2 by Vince Negri \u003cvnegri@asl-control.co.uk\u003e\n"
+        },
+        {
+            "timestamp": 1553616828,
+            "reviewer": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "message": "Uploaded patch set 5: Commit message was updated."
+        },
+        {
+            "timestamp": 1553616841,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 5:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/VIPANinjaGerrit/1702/ (1/10)"
+        },
+        {
+            "timestamp": 1553616868,
+            "reviewer": {
+                "name": "Jenkins",
+                "email": "Jenkins@asl-control.co.uk",
+                "username": "jenkins"
+            },
+            "message": "Patch Set 4:\n\nBuild Started http://asl-jenkins.asl.lan:8080/job/IntegratedToolGerrit/6453/ (4/10)"
+        },
+        {
+            "timestamp": 1553616874,
+            "reviewer": {
+                "name": "Vince Negri",
+                "email": "vnegri@asl-control.co.uk",
+                "username": "vn"
+            },
+            "message": "Patch Set 5: Code-Review+2"
+        }
+    ],
+    "patchSets": [
+        {
+            "number": "1",
+            "revision": "dae9fa4e42b37fbbe40aee2d53fae222b91c2a82",
+            "parents": [
+                "1559afb33761eb0d305188905cb39b0800e819c4"
+            ],
+            "ref": "refs/changes/62/4862/1",
+            "uploader": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "createdOn": 1553536910,
+            "author": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "isDraft": false,
+            "kind": "REWORK",
+            "sizeInsertions": 42,
+            "sizeDeletions": -9
+        },
+        {
+            "number": "2",
+            "revision": "6fdd35aea252df97babfafb47a01a681e0ef7364",
+            "parents": [
+                "1559afb33761eb0d305188905cb39b0800e819c4"
+            ],
+            "ref": "refs/changes/62/4862/2",
+            "uploader": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "createdOn": 1553590214,
+            "author": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "isDraft": false,
+            "kind": "NO_CODE_CHANGE",
+            "comments": [
+                {
+                    "file": "aslcore/asl-common/TableColumnFilterWidget/TableColumnFilterWidget.cpp",
+                    "line": 395,
+                    "reviewer": {
+                        "name": "Vince Negri",
+                        "email": "vnegri@asl-control.co.uk",
+                        "username": "vn"
+                    },
+                    "message": "{ on wrong line."
+                }
+            ],
+            "sizeInsertions": 42,
+            "sizeDeletions": -9
+        },
+        {
+            "number": "3",
+            "revision": "757807779da34e18b5f0de14e758834822c05ea0",
+            "parents": [
+                "1559afb33761eb0d305188905cb39b0800e819c4"
+            ],
+            "ref": "refs/changes/62/4862/3",
+            "uploader": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "createdOn": 1553616339,
+            "author": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "isDraft": false,
+            "kind": "REWORK",
+            "comments": [
+                {
+                    "file": "/COMMIT_MSG",
+                    "line": 7,
+                    "reviewer": {
+                        "name": "Vince Negri",
+                        "email": "vnegri@asl-control.co.uk",
+                        "username": "vn"
+                    },
+                    "message": "No diary entry?"
+                }
+            ],
+            "sizeInsertions": 41,
+            "sizeDeletions": -9
+        },
+        {
+            "number": "4",
+            "revision": "c32efc0c281d70f17af6d9b2fe7f1053492dd051",
+            "parents": [
+                "1559afb33761eb0d305188905cb39b0800e819c4"
+            ],
+            "ref": "refs/changes/62/4862/4",
+            "uploader": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "createdOn": 1553616616,
+            "author": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "isDraft": false,
+            "kind": "NO_CODE_CHANGE",
+            "comments": [
+                {
+                    "file": "/COMMIT_MSG",
+                    "line": 9,
+                    "reviewer": {
+                        "name": "Vince Negri",
+                        "email": "vnegri@asl-control.co.uk",
+                        "username": "vn"
+                    },
+                    "message": "Full stop missing."
+                }
+            ],
+            "sizeInsertions": 41,
+            "sizeDeletions": -9
+        },
+        {
+            "number": "5",
+            "revision": "43b6355ec07ff9041c98be20347ff360b13608f4",
+            "parents": [
+                "1559afb33761eb0d305188905cb39b0800e819c4"
+            ],
+            "ref": "refs/changes/62/4862/5",
+            "uploader": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "createdOn": 1553616828,
+            "author": {
+                "name": "Nigel Scott",
+                "email": "nscott@asl-control.co.uk",
+                "username": "nscott"
+            },
+            "isDraft": false,
+            "kind": "NO_CODE_CHANGE",
+            "sizeInsertions": 41,
+            "sizeDeletions": -9
+        }
+    ],
+    "allReviewers": [
+        {
+            "name": "Vince Negri",
+            "email": "vnegri@asl-control.co.uk",
+            "username": "vn"
+        },
+        {
+            "name": "Stephen Warder",
+            "email": "swarder@asl-control.co.uk",
+            "username": "swarder"
+        },
+        {
+            "name": "Jenkins",
+            "email": "Jenkins@asl-control.co.uk",
+            "username": "jenkins"
+        }
+    ]
+}
+{
+    "type": "stats",
+    "rowCount": 1,
+    "runTimeMilliseconds": 10,
+    "moreChanges": false
+}
