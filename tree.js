@@ -314,6 +314,13 @@ class TreeNodeProvider
                 }
 
                 var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
+                console.log( label );
+
+                console.log( "parent:" + child.parent );
+                if( child.parent )
+                {
+                    console.log( v.value + " parent:" + JSON.stringify( v.parent ) );
+                }
 
                 if( parent !== undefined )
                 {

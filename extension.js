@@ -383,6 +383,7 @@ function activate( context )
 
             var changed = provider.populate( results, icons, formatters, "number" );
 
+            console.log( JSON.stringify( results, null, 2 ) );
             debug( results.length + " entries, " + changed.length + " changed " + ( changed.length > 0 ? ( "(" + changed.join( "," ) + ")" ) : "" ) );
 
             var filter = context.workspaceState.get( 'filter', {} );
