@@ -49,7 +49,7 @@ function getProperties( object, path, parentIndexes, results, expandedPath, inde
     expandedPath = append( expandedPath, p );
     if( o && o[ p ] )
     {
-        results.push( { value: o[ p ], indexes: indexes, path: path, expandedPath: expandedPath } );
+        results.push( { value: o[ p ], indexes: indexes, path: path, expandedPath: expandedPath, parent: o } );
     }
 
     return results;
