@@ -25,7 +25,7 @@ var structure = [
         "children": [
             {
                 "property": "branch",
-                "format": "branch: ${branch}",
+                "label": "branch: ${branch}",
                 "icon": "git-branch",
                 "sort": true,
                 "children": [
@@ -38,13 +38,13 @@ var structure = [
                                 "sort": true,
                                 "icon": "overallScore",
                                 "showChanged": true,
-                                "format": "${number} ${subject}",
+                                "label": "${number} ${subject}",
                                 "hasContextMenu": true,
                                 "tooltip": "${commitMessage}",
                                 "children": [
                                     {
                                         "property": "patchSets.number",
-                                        "format": "Patch Set ${patchSets.number}",
+                                        "label": "Patch Set ${patchSets.number}",
                                         "sort": true,
                                         "children": [
                                             {
@@ -61,7 +61,7 @@ var structure = [
                                                 "children": [
                                                     {
                                                         "property": "patchSets.comments*.message",
-                                                        "format": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
+                                                        "label": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
                                                         "tooltip": "${patchSets.comments.message}"
                                                     }
                                                 ]
@@ -71,7 +71,7 @@ var structure = [
                                     {
                                         "property": "currentPatchSet.number",
                                         "sort": true,
-                                        "format": "Patch set: ${currentPatchSet.number}",
+                                        "label": "Patch set: ${currentPatchSet.number}",
                                         "showChanged": true
                                     },
                                     {
@@ -83,7 +83,7 @@ var structure = [
                                     },
                                     {
                                         "property": "id",
-                                        "format": "ID: ${id}"
+                                        "label": "ID: ${id}"
                                     },
                                     {
                                         "property": "createdOn",
@@ -97,7 +97,7 @@ var structure = [
                                     },
                                     {
                                         "property": "owner.name",
-                                        "format": "Owner: ${owner.name} (${owner.username})",
+                                        "label": "Owner: ${owner.name} (${owner.username})",
                                         "children": [
                                             {
                                                 "property": "owner.email"
@@ -106,7 +106,7 @@ var structure = [
                                     },
                                     {
                                         "property": "comments",
-                                        "format": "Comments",
+                                        "label": "Comments",
                                         "showChanged": true,
                                         "children": [
                                             {

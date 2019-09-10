@@ -5,7 +5,7 @@
         "children": [
             {
                 "property": "branch",
-                "format": "branch: ${branch}",
+                "label": "branch: ${branch}",
                 "icon": "git-branch",
                 "sort": true,
                 "children": [
@@ -18,19 +18,19 @@
                                 "sort": true,
                                 "icon": "overallScore",
                                 "showChanged": true,
-                                "format": "${number} ${subject}",
+                                "label": "${number} ${subject}",
                                 "hasContextMenu": true,
                                 "tooltip": "${commitMessage}",
                                 "children": [
                                     {
                                         "property": "patchSets.number",
-                                        "format": "Patch Set ${patchSets.number}",
+                                        "label": "Patch Set ${patchSets.number}",
                                         "sort": true,
                                         "children": [
                                             {
                                                 "property": "patchSets.comments.file",
                                                 "tooltip": "${patchSets.comments.file}",
-                                                "format": "Comment: ${patchSets.comments.file}",
+                                                "label": "${patchSets.comments.file}",
                                                 "icon": "comment",
                                                 "command": "fetch",
                                                 "arguments": [
@@ -43,7 +43,7 @@
                                                     {
                                                         "parent": "file",
                                                         "property": "patchSets.comments.message",
-                                                        "format": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
+                                                        "label": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
                                                         "tooltip": "${patchSets.comments.message}"
                                                     }
                                                 ]
@@ -51,14 +51,14 @@
                                             {
                                                 "property": "xpatchSets.files.file",
                                                 "tooltip": "${patchSets.files.file}",
-                                                "format": "${patchSets.files.type} ${patchSets.files.file}"
+                                                "label": "${patchSets.files.type} ${patchSets.files.file}"
                                             }
                                         ]
                                     },
                                     {
                                         "property": "currentPatchSet.number",
                                         "sort": true,
-                                        "format": "Patch set: ${currentPatchSet.number}",
+                                        "label": "Patch set: ${currentPatchSet.number}",
                                         "showChanged": true
                                     },
                                     {
@@ -70,7 +70,7 @@
                                     },
                                     {
                                         "property": "id",
-                                        "format": "ID: ${id}"
+                                        "label": "ID: ${id}"
                                     },
                                     {
                                         "property": "createdOn",
@@ -84,7 +84,7 @@
                                     },
                                     {
                                         "property": "owner.name",
-                                        "format": "Owner: ${owner.name} (${owner.username})",
+                                        "label": "Owner: ${owner.name} (${owner.username})",
                                         "children": [
                                             {
                                                 "property": "owner.email"
@@ -93,7 +93,7 @@
                                     },
                                     {
                                         "property": "comments",
-                                        "format": "Comments",
+                                        "label": "Comments",
                                         "showChanged": true,
                                         "children": [
                                             {
