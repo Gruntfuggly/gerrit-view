@@ -294,15 +294,38 @@ class TreeNodeProvider
 
     processChildren( processor, icons, formatters, entry, key, hasChanged, children, parent )
     {
-
         children.map( function( child )
         {
+            var values;
+
+            if( child.property )
+            {
             keys.add( child.property );
 
-
             // var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes : [] );
-            var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
+                values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
+            }
 
+            if( values === undefined && parent !== undefined )
+            {
+                var node = {
+                    source: entry,
+                    indexes: [],
+                    label: child.format,
+                    id: parent.id + "/" + ( parent.nodes.length + 1 ),
+                    visible: true,
+                    nodes: []
+                };
+
+                parent.nodes.push( node );
+
+                if( child.children )
+                {
+                    processor.processChildren( processor, icons, formatters, entry, key, hasChanged, child.children, node );
+                }
+            }
+            else
+            {
             values.map( function( v )
             {
                 var node;
@@ -444,6 +467,7 @@ class TreeNodeProvider
                 }
 
             }, processor );
+            }
         }, processor );
     }
 
