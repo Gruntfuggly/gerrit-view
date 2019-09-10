@@ -168,7 +168,7 @@ class TreeNodeProvider
 
         treeItem.id = node.id;
 
-        if( node.showChanged === true && node.changed == true )
+        if( node.showChanged === true && node.changed === true )
         {
             treeItem.label = treeItem.label;
         }
@@ -287,6 +287,17 @@ class TreeNodeProvider
             return node.rawLabel === this;
         };
 
+        var updatePlaceholders = function( source, entry, indexes )
+        {
+            var result = source;
+            var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
+            result = result.replace( regex, function( match, name )
+            {
+                return objectUtils.getUniqueProperty( entry, name, indexes );
+            } );
+            return result;
+        };
+
         children.map( function( child )
         {
             keys.add( child.property );
@@ -392,13 +403,12 @@ class TreeNodeProvider
 
                 if( child.format !== undefined )
                 {
-                    var label = child.format;
-                    var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
-                    label = label.replace( regex, function( match, name )
-                    {
-                        return objectUtils.getUniqueProperty( entry, name, v.indexes );
-                    } );
-                    node.label = label;
+                    node.label = updatePlaceholders( child.format, entry, v.indexes );
+                }
+
+                if( child.tooltip !== undefined )
+                {
+                    node.tooltip = updatePlaceholders( child.tooltip, entry, v.indexes );
                 }
 
                 if( child.arguments !== undefined )
@@ -406,12 +416,7 @@ class TreeNodeProvider
                     node.arguments = [];
                     child.arguments.map( function( argument )
                     {
-                        var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
-                        argument = argument.replace( regex, function( match, name )
-                        {
-                            return objectUtils.getUniqueProperty( entry, name, v.indexes );
-                        } );
-                        node.arguments.push( argument );
+                        node.arguments.push( updatePlaceholders( argument, entry, v.indexes ) );
                     } );
                 }
 
@@ -437,17 +442,6 @@ class TreeNodeProvider
                     {
                         node.icon = icons[ child.icon ]( entry, v );
                     }
-                }
-
-                if( child.tooltip )
-                {
-                    var tooltip = child.tooltip;
-                    var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
-                    tooltip = tooltip.replace( regex, function( match, name )
-                    {
-                        return objectUtils.getUniqueProperty( entry, name, v.indexes );
-                    } );
-                    node.tooltip = tooltip;
                 }
 
                 node.command = child.command;
