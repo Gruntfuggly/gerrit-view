@@ -294,163 +294,187 @@ class TreeNodeProvider
 
     processChildren( processor, icons, formatters, entry, key, hasChanged, children, parent )
     {
-
         children.map( function( child )
         {
-            keys.add( child.property );
+            var values;
 
-
-            // var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes : [] );
-            var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
-
-            values.map( function( v )
+            if( child.property )
             {
-                var node;
+                keys.add( child.property );
 
-                // var sanitizedPathElement = sanitizePath( v.expandedPath );
-                // var id = parent ? ( parent.id + "." + sanitizedPathElement ) : sanitizedPathElement;
-                // var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
-                var id = "0";
-                if( parent )
-                {
-                    //     // id = parent.id + "/" + ( v.merge ? "*" : parent.nodes.length + 1 );
-                    id = parent.id + "/" + ( parent.nodes.length + 1 );
-                }
+                // var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes : [] );
+                values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
+            }
 
-                var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
-                console.log( label );
+            if( values === undefined && parent !== undefined )
+            {
+                var node = {
+                    source: entry,
+                    indexes: [],
+                    label: child.format,
+                    id: parent.id + "/" + ( parent.nodes.length + 1 ),
+                    visible: true,
+                    nodes: []
+                };
 
-                console.log( "parent:" + child.parent );
-                if( child.parent )
-                {
-                    console.log( v.value + " parent:" + JSON.stringify( v.parent ) );
-                }
-
-                if( parent !== undefined )
-                {
-                    // node = parent.nodes.find( locateNode, id );
-                    node = parent.nodes.find( locateNode, label );
-                }
-                else
-                {
-                    // node = nodes.find( locateNode, id );
-                    node = nodes.find( locateNode, label );
-                }
-
-                // console.log( "found:" + ( node === undefined ) + " " + "label:" + label );
-                if( node === undefined )
-                {
-                    node = {
-                        source: entry,
-                        entry: key,
-                        value: v.value,
-                        // expandedPath: v.expandedPath,
-                        indexes: v.indexes,
-                        label: label,
-                        rawLabel: label,
-                        type: child.property,
-                        id: id,
-                        visible: true,
-                        showChanged: child.showChanged,
-                        hasContextMenu: child.hasContextMenu,
-                        nodes: [],
-                        changed: ( changedNodes[ id ] === true || hasChanged )
-                    };
-
-                    if( child.parent )
-                    {
-                        var parentLabel = ( "" + v.parent[ child.parent ] ).replace( /(\r\n|\n|\r)/gm, " " );
-
-                        parent = parent.parent.nodes.find( locateNode, parentLabel );
-                    }
-
-                    if( parent )
-                    {
-                        node.parent = parent;
-                        parent.nodes.push( node );
-                        if( child.sort === true )
-                        {
-                            parent.nodes.sort( sortNodes );
-                        }
-                    }
-                    else
-                    {
-                        nodes.push( node );
-                        nodes.sort( sortNodes );
-                    }
-                }
-                else
-                {
-                    // TODO Only flag nodes which have actually changed
-                    node.changed = changedNodes[ node.id ] || hasChanged;
-                    node.delete = false;
-                }
-
-                if( child.formatter !== undefined )
-                {
-                    if( formatters[ child.formatter ] !== undefined )
-                    {
-                        node.label = formatters[ child.formatter ]( entry, v );
-                    }
-                }
-
-                if( child.format !== undefined )
-                {
-                    node.label = updatePlaceholders( child.format, entry, v.indexes );
-                }
-
-                if( child.tooltip !== undefined )
-                {
-                    node.tooltip = updatePlaceholders( child.tooltip, entry, v.indexes );
-                }
-
-                if( child.arguments !== undefined )
-                {
-                    node.arguments = [];
-                    child.arguments.map( function( argument )
-                    {
-                        node.arguments.push( updatePlaceholders( argument, entry, v.indexes ) );
-                    } );
-                }
-
-                if( child.icon )
-                {
-                    if( octicons[ child.icon ] )
-                    {
-                        var colour = new vscode.ThemeColor( "foreground" );
-                        var octiconIconPath = path.join( storageLocation, child.icon + ".svg" );
-
-                        if( !fs.existsSync( octiconIconPath ) )
-                        {
-                            var octiconIconDefinition = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" +
-                                octicons[ child.icon ].toSVG( { "xmlns": "http://www.w3.org/2000/svg", "fill": "#C5C5C5" } );
-
-                            fs.writeFileSync( octiconIconPath, octiconIconDefinition );
-                        }
-
-                        node.octicon = octiconIconPath;
-                    }
-
-                    else if( icons[ child.icon ] !== undefined )
-                    {
-                        node.icon = icons[ child.icon ]( entry, v );
-                    }
-                }
-
-                node.command = child.command;
-
-                if( node.showChanged && hasChanged )
-                {
-                    changedNodes[ node.id ] = true;
-                    processor._context.globalState.update( 'changedNodes', changedNodes );
-                }
+                parent.nodes.push( node );
 
                 if( child.children )
                 {
                     processor.processChildren( processor, icons, formatters, entry, key, hasChanged, child.children, node );
                 }
+            }
+            else
+            {
+                values.map( function( v )
+                {
+                    var node;
 
-            }, processor );
+                    // var sanitizedPathElement = sanitizePath( v.expandedPath );
+                    // var id = parent ? ( parent.id + "." + sanitizedPathElement ) : sanitizedPathElement;
+                    // var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
+                    var id = "0";
+                    if( parent )
+                    {
+                        //     // id = parent.id + "/" + ( v.merge ? "*" : parent.nodes.length + 1 );
+                        id = parent.id + "/" + ( parent.nodes.length + 1 );
+                    }
+
+                    var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
+                    console.log( label );
+
+                    console.log( "parent:" + child.parent );
+                    if( child.parent )
+                    {
+                        console.log( v.value + " parent:" + JSON.stringify( v.parent ) );
+                    }
+
+                    if( parent !== undefined )
+                    {
+                        // node = parent.nodes.find( locateNode, id );
+                        node = parent.nodes.find( locateNode, label );
+                    }
+                    else
+                    {
+                        // node = nodes.find( locateNode, id );
+                        node = nodes.find( locateNode, label );
+                    }
+
+                    // console.log( "found:" + ( node === undefined ) + " " + "label:" + label );
+                    if( node === undefined )
+                    {
+                        node = {
+                            source: entry,
+                            entry: key,
+                            value: v.value,
+                            // expandedPath: v.expandedPath,
+                            indexes: v.indexes,
+                            label: label,
+                            rawLabel: label,
+                            type: child.property,
+                            id: id,
+                            visible: true,
+                            showChanged: child.showChanged,
+                            hasContextMenu: child.hasContextMenu,
+                            nodes: [],
+                            changed: ( changedNodes[ id ] === true || hasChanged )
+                        };
+
+                        if( child.parent )
+                        {
+                            var parentLabel = ( "" + v.parent[ child.parent ] ).replace( /(\r\n|\n|\r)/gm, " " );
+
+                            parent = parent.parent.nodes.find( locateNode, parentLabel );
+                        }
+
+                        if( parent )
+                        {
+                            node.parent = parent;
+                            parent.nodes.push( node );
+                            if( child.sort === true )
+                            {
+                                parent.nodes.sort( sortNodes );
+                            }
+                        }
+                        else
+                        {
+                            nodes.push( node );
+                            nodes.sort( sortNodes );
+                        }
+                    }
+                    else
+                    {
+                        // TODO Only flag nodes which have actually changed
+                        node.changed = changedNodes[ node.id ] || hasChanged;
+                        node.delete = false;
+                    }
+
+                    if( child.formatter !== undefined )
+                    {
+                        if( formatters[ child.formatter ] !== undefined )
+                        {
+                            node.label = formatters[ child.formatter ]( entry, v );
+                        }
+                    }
+
+                    if( child.format !== undefined )
+                    {
+                        node.label = updatePlaceholders( child.format, entry, v.indexes );
+                    }
+
+                    if( child.tooltip !== undefined )
+                    {
+                        node.tooltip = updatePlaceholders( child.tooltip, entry, v.indexes );
+                    }
+
+                    if( child.arguments !== undefined )
+                    {
+                        node.arguments = [];
+                        child.arguments.map( function( argument )
+                        {
+                            node.arguments.push( updatePlaceholders( argument, entry, v.indexes ) );
+                        } );
+                    }
+
+                    if( child.icon )
+                    {
+                        if( octicons[ child.icon ] )
+                        {
+                            var colour = new vscode.ThemeColor( "foreground" );
+                            var octiconIconPath = path.join( storageLocation, child.icon + ".svg" );
+
+                            if( !fs.existsSync( octiconIconPath ) )
+                            {
+                                var octiconIconDefinition = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" +
+                                    octicons[ child.icon ].toSVG( { "xmlns": "http://www.w3.org/2000/svg", "fill": "#C5C5C5" } );
+
+                                fs.writeFileSync( octiconIconPath, octiconIconDefinition );
+                            }
+
+                            node.octicon = octiconIconPath;
+                        }
+
+                        else if( icons[ child.icon ] !== undefined )
+                        {
+                            node.icon = icons[ child.icon ]( entry, v );
+                        }
+                    }
+
+                    node.command = child.command;
+
+                    if( node.showChanged && hasChanged )
+                    {
+                        changedNodes[ node.id ] = true;
+                        processor._context.globalState.update( 'changedNodes', changedNodes );
+                    }
+
+                    if( child.children )
+                    {
+                        processor.processChildren( processor, icons, formatters, entry, key, hasChanged, child.children, node );
+                    }
+
+                }, processor );
+            }
         }, processor );
     }
 
