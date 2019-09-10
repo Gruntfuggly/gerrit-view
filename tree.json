@@ -28,30 +28,40 @@
                                         "sort": true,
                                         "children": [
                                             {
-                                                "property": "patchSets.comments.file",
-                                                "tooltip": "${patchSets.comments.file}",
-                                                "label": "${patchSets.comments.file}",
-                                                "icon": "comment",
-                                                "command": "fetch",
-                                                "arguments": [
-                                                    "${patchSets.comments.file}",
-                                                    "${patchSets.revision}",
-                                                    "${number}",
-                                                    "${patchSets.number}"
-                                                ],
+                                                "label": "Comments",
                                                 "children": [
                                                     {
-                                                        "parent": "file",
-                                                        "property": "patchSets.comments.message",
-                                                        "label": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
-                                                        "tooltip": "${patchSets.comments.message}"
+                                                        "property": "patchSets.comments.file",
+                                                        "tooltip": "${patchSets.comments.file}",
+                                                        "label": "${patchSets.comments.file}",
+                                                        "icon": "comment",
+                                                        "command": "fetch",
+                                                        "arguments": [
+                                                            "${patchSets.comments.file}",
+                                                            "${patchSets.revision}",
+                                                            "${number}",
+                                                            "${patchSets.number}"
+                                                        ],
+                                                        "children": [
+                                                            {
+                                                                "parent": "file",
+                                                                "property": "patchSets.comments.message",
+                                                                "label": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
+                                                                "tooltip": "${patchSets.comments.message}"
+                                                            }
+                                                        ]
                                                     }
                                                 ]
                                             },
                                             {
-                                                "property": "patchSets.files.file",
-                                                "tooltip": "${patchSets.files.file}",
-                                                "label": "${patchSets.files.type} ${patchSets.files.file}"
+                                                "label": "Files",
+                                                "children": [
+                                                    {
+                                                        "property": "patchSets.files.file",
+                                                        "tooltip": "${patchSets.files.file}",
+                                                        "label": "${patchSets.files.type} ${patchSets.files.file}"
+                                                    }
+                                                ]
                                             }
                                         ]
                                     },
