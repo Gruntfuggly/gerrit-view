@@ -1,3 +1,6 @@
+# v0.0.11 - 2019-09-10
+- Allow use of an SSH agent
+
 # v0.0.10 - 2019-04-30
 - Add descriptions of icons to README.md
 
