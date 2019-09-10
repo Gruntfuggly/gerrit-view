@@ -6,6 +6,7 @@ var path = require( 'path' );
 var os = require( 'os' );
 var childProcess = require( 'child_process' );
 var ini = require( 'ini' );
+var stripJsonComments = require( 'strip-json-comments' );
 
 var gerrit = require( './gerrit.js' );
 var tree = require( "./tree.js" );
@@ -165,7 +166,9 @@ function activate( context )
             try
             {
                 debug( "Reading tree structure from " + treeConfigFile );
-                structure = JSON.parse( fs.readFileSync( treeConfigFile ) );
+                var withComments = fs.readFileSync( treeConfigFile, 'utf-8' );
+                var withoutComments = stripJsonComments( withComments );
+                structure = JSON.parse( withoutComments );
             }
             catch( e )
             {
