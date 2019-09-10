@@ -101,6 +101,23 @@ function sanitizePath( path )
     return path.replace( /\./g, '_' );
 }
 
+function locateNode( node )
+{
+    // return node.id === this;
+    return node.rawLabel === this;
+}
+
+function updatePlaceholders( source, entry, indexes )
+{
+    var result = source;
+    var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
+    result = result.replace( regex, function( match, name )
+    {
+        return objectUtils.getUniqueProperty( entry, name, indexes );
+    } );
+    return result;
+}
+
 class TreeNodeProvider
 {
     constructor( _context )
@@ -275,37 +292,13 @@ class TreeNodeProvider
         forEachNode( function( e ) { e.visible = true; }, nodes );
     }
 
-    findParent( path, label )
-    {
-    }
-
     processChildren( processor, icons, formatters, entry, key, hasChanged, children, parent )
     {
-        var locateNode = function( node )
-        {
-            // return node.id === this;
-            return node.rawLabel === this;
-        };
-
-        var updatePlaceholders = function( source, entry, indexes )
-        {
-            var result = source;
-            var regex = new RegExp( "\\$\\{(.*?)\\}", "g" );
-            result = result.replace( regex, function( match, name )
-            {
-                return objectUtils.getUniqueProperty( entry, name, indexes );
-            } );
-            return result;
-        };
 
         children.map( function( child )
         {
             keys.add( child.property );
 
-            // if( child.property === "patchSets.comments.message" )
-            // {
-            //     console.log( "wtf" );
-            // }
 
             // var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes : [] );
             var values = objectUtils.getProperties( entry, child.property, parent ? parent.indexes.slice( 1 ) : [] );
