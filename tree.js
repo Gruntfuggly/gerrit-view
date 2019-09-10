@@ -353,6 +353,13 @@ class TreeNodeProvider
                         changed: ( changedNodes[ id ] === true || hasChanged )
                     };
 
+                    if( child.parent )
+                    {
+                        var parentLabel = ( "" + v.parent[ child.parent ] ).replace( /(\r\n|\n|\r)/gm, " " );
+
+                        parent = parent.parent.nodes.find( locateNode, parentLabel );
+                    }
+
                     if( parent )
                     {
                         node.parent = parent;

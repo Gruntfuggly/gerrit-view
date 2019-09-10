@@ -30,6 +30,7 @@
                                             {
                                                 "property": "patchSets.comments.file",
                                                 "tooltip": "${patchSets.comments.file}",
+                                                "format": "Comment: ${patchSets.comments.file}",
                                                 "icon": "comment",
                                                 "command": "fetch",
                                                 "arguments": [
@@ -40,11 +41,17 @@
                                                 ],
                                                 "children": [
                                                     {
-                                                        "property": "patchSets.comments*.message",
+                                                        "parent": "file",
+                                                        "property": "patchSets.comments.message",
                                                         "format": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
                                                         "tooltip": "${patchSets.comments.message}"
                                                     }
                                                 ]
+                                            },
+                                            {
+                                                "property": "xpatchSets.files.file",
+                                                "tooltip": "${patchSets.files.file}",
+                                                "format": "${patchSets.files.type} ${patchSets.files.file}"
                                             }
                                         ]
                                     },
