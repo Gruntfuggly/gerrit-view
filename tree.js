@@ -311,7 +311,7 @@ class TreeNodeProvider
                 var node = {
                     source: entry,
                     indexes: [],
-                    label: child.format,
+                    label: child.label,
                     id: parent.id + "/" + ( parent.nodes.length + 1 ),
                     visible: true,
                     nodes: []
@@ -417,9 +417,9 @@ class TreeNodeProvider
                         }
                     }
 
-                    if( child.format !== undefined )
+                    if( child.label !== undefined )
                     {
-                        node.label = updatePlaceholders( child.format, entry, v.indexes );
+                        node.label = updatePlaceholders( child.label, entry, v.indexes );
                     }
 
                     if( child.tooltip !== undefined )
