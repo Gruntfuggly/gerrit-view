@@ -709,29 +709,27 @@ function activate( context )
                             var decoration = decorations[ editor.id ][ line ];
                             if( decoration === undefined )
                             {
+                                var marker = {
+                                    backgroundColor: config.get( "comments.backgroundColour", "#008000" ),
+                                    color: config.get( "comments.colour", "#ffffff" ),
+                                    contentText: authors[ line ].join( ", " )
+                                };
+
                                 decoration = vscode.window.createTextEditorDecorationType( {
                                     overviewRulerLane: vscode.OverviewRulerLane.Full,
                                     dark: {
-                                        overviewRulerColor: "#008000D0",
+                                        overviewRulerColor: config.get( "comments.lineHighlightColour", "#004000" ),
                                         gutterIconPath: context.asAbsolutePath( path.join( "resources/icons", "dark", "comment.svg" ) ),
                                         gutterIconSize: "contain",
-                                        backgroundColor: "#004000",
-                                        after: {
-                                            backgroundColor: "#008000",
-                                            color: "white",
-                                            contentText: authors[ line ].join( ", " ),
-                                        }
+                                        backgroundColor: config.get( "comments.lineHighlightColour", "#004000" ),
+                                        after: marker
                                     },
                                     light: {
-                                        overviewRulerColor: "#008000D0",
+                                        overviewRulerColor: config.get( "comments.lineHighlightColour", "#004000" ),
                                         gutterIconPath: context.asAbsolutePath( path.join( "resources/icons", "light", "comment.svg" ) ),
                                         gutterIconSize: "contain",
-                                        backgroundColor: "#00E000",
-                                        after: {
-                                            backgroundColor: "#008000",
-                                            color: "white",
-                                            contentText: authors[ line ].join( ", " ),
-                                        }
+                                        backgroundColor: config.get( "comments.lineHighlightColour", "#004000" ),
+                                        after: marker
                                     },
                                     isWholeLine: true
                                 } );

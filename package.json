@@ -264,6 +264,21 @@
                 "gerrit-view.localRepo": {
                     "type": "string",
                     "markdownDescription": "The path to a local copy of the repository, used for showing review comments in files. Defaults to the current workspace repo."
+                },
+                "gerrit-view.comments.colour": {
+                    "type": "string",
+                    "default": "#ffffff",
+                    "markdownDescription": "Text foreground colour for the inline comment markers"
+                },
+                "gerrit-view.comments.backgroundColour": {
+                    "type": "string",
+                    "default": "#008000",
+                    "markdownDescription": "Background colour for the inline comment markers"
+                },
+                "gerrit-view.comments.lineHighlightColour": {
+                    "type": "string",
+                    "default": "#004000",
+                    "markdownDescription": "Background colour for the inline line highlight markers"
                 }
             }
         }
