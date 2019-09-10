@@ -17,6 +17,112 @@ var showTree = false;
 var icons = {};
 var formatters = {};
 var decorations = {};
+var structure = [
+    {
+        "property": "project",
+        "icon": "beaker",
+        "children": [
+            {
+                "property": "branch",
+                "format": "branch: ${branch}",
+                "icon": "git-branch",
+                "sort": true,
+                "children": [
+                    {
+                        "property": "status",
+                        "sort": true,
+                        "children": [
+                            {
+                                "property": "subject",
+                                "sort": true,
+                                "icon": "overallScore",
+                                "showChanged": true,
+                                "format": "${number} ${subject}",
+                                "hasContextMenu": true,
+                                "tooltip": "${commitMessage}",
+                                "children": [
+                                    {
+                                        "property": "patchSets.number",
+                                        "format": "Patch Set ${patchSets.number}",
+                                        "sort": true,
+                                        "children": [
+                                            {
+                                                "property": "patchSets.comments.file",
+                                                "tooltip": "${patchSets.comments.file}",
+                                                "icon": "comment",
+                                                "command": "fetch",
+                                                "arguments": [
+                                                    "${patchSets.comments.file}",
+                                                    "${patchSets.revision}",
+                                                    "${number}",
+                                                    "${patchSets.number}"
+                                                ],
+                                                "children": [
+                                                    {
+                                                        "property": "patchSets.comments*.message",
+                                                        "format": "line ${patchSets.comments.line}, ${patchSets.comments.reviewer.username}: ${patchSets.comments.message}",
+                                                        "tooltip": "${patchSets.comments.message}"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "property": "currentPatchSet.number",
+                                        "sort": true,
+                                        "format": "Patch set: ${currentPatchSet.number}",
+                                        "showChanged": true
+                                    },
+                                    {
+                                        "property": "currentPatchSet.approvals.by.name",
+                                        "sort": true,
+                                        "icon": "score",
+                                        "tooltip": "${currentPatchSet.approvals.by.email}",
+                                        "showChanged": true
+                                    },
+                                    {
+                                        "property": "id",
+                                        "format": "ID: ${id}"
+                                    },
+                                    {
+                                        "property": "createdOn",
+                                        "formatter": "created"
+                                    },
+                                    {
+                                        "property": "lastUpdated",
+                                        "sort": true,
+                                        "formatter": "updated",
+                                        "showChanged": true
+                                    },
+                                    {
+                                        "property": "owner.name",
+                                        "format": "Owner: ${owner.name} (${owner.username})",
+                                        "children": [
+                                            {
+                                                "property": "owner.email"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "property": "comments",
+                                        "format": "Comments",
+                                        "showChanged": true,
+                                        "children": [
+                                            {
+                                                "property": "comments.message",
+                                                "tooltip": "${comments.message}"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+];
 
 function toString( date )
 {
