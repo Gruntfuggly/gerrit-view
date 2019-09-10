@@ -30,7 +30,7 @@
                                             {
                                                 "property": "patchSets.comments.file",
                                                 "tooltip": "${patchSets.comments.file}",
-                                                "format": "Comment: ${patchSets.comments.file}",
+                                                "format": "${patchSets.comments.file}",
                                                 "icon": "comment",
                                                 "command": "fetch",
                                                 "arguments": [
@@ -49,7 +49,7 @@
                                                 ]
                                             },
                                             {
-                                                "property": "xpatchSets.files.file",
+                                                "property": "patchSets.files.file",
                                                 "tooltip": "${patchSets.files.file}",
                                                 "format": "${patchSets.files.type} ${patchSets.files.file}"
                                             }
