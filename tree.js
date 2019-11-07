@@ -15,6 +15,7 @@ var hashes = {};
 var keys = new Set();
 var selectedNode;
 var showChangedOnly = false;
+var rootNodeIds = 1;
 
 function hash( text )
 {
@@ -104,7 +105,7 @@ function sanitizePath( path )
 function locateNode( node )
 {
     // return node.id === this;
-    return node.rawLabel === this;
+    return node.rawLabel === this.toString();
 }
 
 function updatePlaceholders( source, entry, indexes )
@@ -333,11 +334,14 @@ class TreeNodeProvider
                     // var sanitizedPathElement = sanitizePath( v.expandedPath );
                     // var id = parent ? ( parent.id + "." + sanitizedPathElement ) : sanitizedPathElement;
                     // var id = sanitizePath( child.property + ":" + ( parent ? ( parent.id + "." + v.value ) : v.value ) );
-                    var id = "0";
+                    var id;
                     if( parent )
                     {
                         //     // id = parent.id + "/" + ( v.merge ? "*" : parent.nodes.length + 1 );
                         id = parent.id + "/" + ( parent.nodes.length + 1 );
+                    } else
+                    {
+                        id = rootNodeIds++;
                     }
 
                     var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );
@@ -476,6 +480,7 @@ class TreeNodeProvider
         forEachNode( function( node ) { node.delete = true; }, nodes );
 
         var updatedEntries = [];
+        rootNodeIds = 1;
 
         data.map( function( item, index )
         {
