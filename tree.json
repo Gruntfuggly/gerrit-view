@@ -49,7 +49,7 @@
                                                 ]
                                             },
                                             {
-                                                "property": "xpatchSets.files.file",
+                                                "property": "patchSets.files.file",
                                                 "tooltip": "${patchSets.files.file}",
                                                 "label": "${patchSets.files.type} ${patchSets.files.file}"
                                             }

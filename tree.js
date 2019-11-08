@@ -341,7 +341,8 @@ class TreeNodeProvider
                         id = parent.id + "/" + ( parent.nodes.length + 1 );
                     } else
                     {
-                        id = rootNodeIds++;
+                        id = ( rootNodeIds ).toString();
+                        rootNodeIds++;
                     }
 
                     var label = ( "" + v.value ).replace( /(\r\n|\n|\r)/gm, " " );

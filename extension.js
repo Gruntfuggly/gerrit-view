@@ -669,22 +669,23 @@ function activate( context )
 
                         comments.map( function( comment )
                         {
-                            if( authors[ comment.line ] === undefined )
+                            var line = ( comment.line > 0 ) ? comment.line : 1;
+                            if( authors[ line ] === undefined )
                             {
-                                authors[ comment.line ] = [ comment.reviewer.name ];
+                                authors[ line ] = [ comment.reviewer.name ];
                             }
-                            else if( authors[ comment.line ].indexOf( comment.reviewer.name ) === -1 )
+                            else if( authors[ line ].indexOf( comment.reviewer.name ) === -1 )
                             {
-                                authors[ comment.line ].push( comment.reviewer.name );
+                                authors[ line ].push( comment.reviewer.name );
                             }
 
-                            if( messages[ comment.line ] === undefined )
+                            if( messages[ line ] === undefined )
                             {
-                                messages[ comment.line ] = comment.reviewer.name + ": " + comment.message;
+                                messages[ line ] = comment.reviewer.name + ": " + comment.message;
                             }
                             else
                             {
-                                messages[ comment.line ] += "\n\n" + comment.reviewer.name + ": " + comment.message;
+                                messages[ line ] += "\n\n" + comment.reviewer.name + ": " + comment.message;
                             }
 
                         } );
