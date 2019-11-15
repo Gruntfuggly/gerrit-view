@@ -768,16 +768,21 @@ function activate( context )
         {
             if( e.focused )
             {
-                provider.sync();
-                if( lastResults === undefined )
+                var interval = parseInt( vscode.workspace.getConfiguration( 'gerrit-view' ).get( 'autoRefresh' ) );
+
+                if( !isNaN( interval ) && interval > 0 )
                 {
-                    getGerritData();
-                }
-                else
-                {
-                    debug( "Refreshing tree..." );
-                    buildTree( lastResults );
-                    scheduleRefresh();
+                    provider.sync();
+                    if( lastResults === undefined )
+                    {
+                        getGerritData();
+                    }
+                    else
+                    {
+                        debug( "Refreshing tree..." );
+                        buildTree( lastResults );
+                        scheduleRefresh();
+                    }
                 }
             }
         } ) );
