@@ -48,6 +48,33 @@ Alternatively, open Visual Studio code, press `Ctrl+P` or `Cmd+P` and type:
 
 The source code is available on GitHub [here](https://github.com/Gruntfuggly/gerrit-view).
 
+## Steps
+
+You have to reload the window after installing to start displaying the 
+
+Go to the settings and select Gerrit View settings
+
+The `Server` field should be filled with just the dns name of the server (and not with http or ssh)
+
+e.g:
+If your server URL is `https://gerrit.server.com`, just enter `gerrit.server.com` in this field
+
+The `Port` should have a value of the port at which the Gerrit server is listening to.
+This can be got from the SSH clone command in any of the repos in Gerrit 
+
+e.g: if the clone command is 
+```
+git clone "ssh://user@gerrit.server.com:8282/REPOSITORY/NAME"
+```
+Here `8282` is the port. This should be entered in the `Port` field in settings
+
+
+The `Path To Ssh Key` should have the private key (generally the id_rsa file in the ~/.ssh/ path) file in the machine to which you have connected to. Make sure the corresponding public key is added in the Gerrit server (else you will get authentication error)
+
+
+
+
+
 ## Commands
 
 The default query is `status:open` which will return open change sets from all projects and branches. To modify the query, use the `Gerrit View: Set Query` command.
