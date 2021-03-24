@@ -789,7 +789,7 @@ function activate( context )
 
         context.subscriptions.push( vscode.commands.registerCommand( 'gerrit-view.openInBrowser', function( item )
         {
-            debug( node.source.url );
+            debug( item.source.url );
             vscode.commands.executeCommand( 'vscode.open', vscode.Uri.parse( item.source.url ) );
         } ) );
 
